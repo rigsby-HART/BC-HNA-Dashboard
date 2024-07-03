@@ -2,7 +2,7 @@
 import pdb
 
 import pandas as pd
-pd.set_option("styler.format.thousands", ",")
+# pd.set_option("styler.format.thousands", ",")
 import numpy as np
 import warnings
 import json, os
@@ -16,10 +16,10 @@ from sqlalchemy import create_engine
 # fiona.supported_drivers
 warnings.filterwarnings("ignore")
 current_dir = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.join(current_dir, '..\\..\\Inputs\\new_hart.db')
+# db_path = os.path.join(current_dir, '..\\..\\Inputs\\new_hart.db')
 # pdb.set_trace()
-engine_new = create_engine('sqlite:///' + f'{db_path}')
-engine_old = create_engine('sqlite:///Scripts//sources//old_hart.db')
+engine_new = create_engine('sqlite:///sources//new_hart.db')
+engine_old = create_engine('sqlite:///sources//old_hart.db')
 
 
 
@@ -106,7 +106,7 @@ layout = html.Div(children=[
     # Add the Export to PDF button
     # dbc.Button("Export as PDF", id="export-button", className="mb-3", color="primary"),
 
-    html.Div(id='dummy-output', style={'display': 'none'}),
+    # html.Div(id='dummy-output', style={'display': 'none'}),
 
     html.Div(id='page-content-to-print',
             children=[

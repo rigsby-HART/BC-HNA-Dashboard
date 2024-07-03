@@ -8,16 +8,16 @@ from app_file import app
 
 # Connect to app pages
 # from pages import page1, page2, page3, page4, page5, page6, page7, page8
-from Scripts.pages import page1, page2
+from pages import page1, page2
 
 # Define the index page layout
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     html.Div(id='page-content', children=[]),
-    html.Button("Download", id="btn"), dcc.Download(id="download"),
-    # Add external scripts for jsPDF and html2canvas
-    html.Script(src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"),
-    html.Script(src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"),
+    # html.Button("Download", id="btn"), dcc.Download(id="download"),
+    # # Add external scripts for jsPDF and html2canvas
+    # html.Script(src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"),
+    # html.Script(src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"),
 ])
 
 server = app.server

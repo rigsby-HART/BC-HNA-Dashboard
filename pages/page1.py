@@ -3,7 +3,7 @@
 import pandas as pd
 import numpy as np
 import warnings
-import json, os, pdb
+import json, os
 import geopandas as gpd
 # import fiona
 import plotly.graph_objects as go
@@ -13,10 +13,10 @@ from sqlalchemy import create_engine
 # fiona.supported_drivers
 warnings.filterwarnings("ignore")
 current_dir = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.join(current_dir, '..\\..\\Inputs\\new_hart.db')
+# db_path = os.path.join(current_dir, '..\\..\\Inputs\\new_hart.db')
 # pdb.set_trace()
-engine_new = create_engine('sqlite:///' + f'{db_path}')
-engine_old = create_engine('sqlite:///Scripts//sources//old_hart.db')
+engine_new = create_engine('sqlite:///sources//new_hart.db')
+engine_old = create_engine('sqlite:///sources//old_hart.db')
 # # Importing income data
 #
 # df_income = pd.read_sql_table('income', engine.connect())
@@ -33,7 +33,7 @@ engine_old = create_engine('sqlite:///Scripts//sources//old_hart.db')
 
 geo_info = pd.read_sql_table('id_table', engine_new.connect())
 # Importing Geo Code Information
-# pdb.set_trace()
+
 mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_old.connect())
 df_geo_list = pd.read_sql_table('geocodes', engine_old.connect())
 df_region_list = pd.read_sql_table('regioncodes', engine_old.connect())
@@ -43,7 +43,7 @@ df_province_list.columns = df_geo_list.columns
 
 # Importing Province Map
 
-gdf_p_code_added = gpd.read_file('./Scripts/sources/mapdata_simplified/province.shp')
+gdf_p_code_added = gpd.read_file('./sources/mapdata_simplified/province.shp')
 gdf_p_code_added = gdf_p_code_added.set_index('Geo_Code')
 
 # Importing subregions which don't have data
