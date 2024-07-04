@@ -20,7 +20,6 @@ app.layout = html.Div([
     html.Script(src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"),
     html.Script(src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"),
     dcc.Download(id="download-dataframe-xlsx"),
-    dcc.Store(id='current-page', data='', storage_type='memory'),
 ])
 
 server = app.server
@@ -28,12 +27,11 @@ server = app.server
 # Create the callback to handle multipage inputs
 @app.callback(
     Output('page-content', 'children'),
-    Output('current-page', 'data'),
-    [Input('url', 'pathname')],
+    Input('url', 'pathname')
 )
 def display_page(pathname):
     if pathname == '/page1':
-        return page1.layout, 'page1'
+        return page1.layout
     elif pathname == '/page2':
         return html.Div([
             page2.layout,
@@ -41,7 +39,7 @@ def display_page(pathname):
             html.Div(id='export-buttons', children=[
                 html.Button(id=f"export-table-{i}", n_clicks=0, style={'display': 'none'}) for i in range(1, 16)
             ], style={'display': 'none'})
-        ]), 'page2'
+        ])
     else:
         return "404 Page Error! Please choose a link"
 
@@ -86,14 +84,10 @@ table_functions = {
 @app.callback(
     Output("download-dataframe-xlsx", "data"),
     [Input(f"export-table-{i}", "n_clicks") for i in range(1, 16)] +
-    [Input('current-page', 'data'), Input('main-area', 'data'), Input('comparison-area', 'data'), Input('area-scale-store', 'data')],
+    [State('main-area', 'data'), State('comparison-area', 'data'), State('area-scale-store', 'data')],
     prevent_initial_call=True,
 )
 def download_xlsx(*args):
-    current_page = args[-4]
-    if current_page != 'page2':
-        return no_update
-
     ctx = callback_context
     if not ctx.triggered:
         return no_update
