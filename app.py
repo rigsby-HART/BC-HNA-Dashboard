@@ -14,10 +14,10 @@ from pages import page1, page2
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     html.Div(id='page-content', children=[]),
-    # html.Button("Download", id="btn"), dcc.Download(id="download"),
-    # # Add external scripts for jsPDF and html2canvas
-    # html.Script(src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"),
-    # html.Script(src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"),
+    # Add external scripts for jsPDF and html2canvas
+    html.Script(src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"),
+    html.Script(src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"),
+    html.Script(src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"),
 ])
 
 server = app.server
@@ -36,6 +36,26 @@ def display_page(pathname):
         return page2.layout
     else: # if redirected to unknown link
         return "404 Page Error! Please choose a link"
+
+app.clientside_callback(
+     """
+    function(n_clicks){
+        if(n_clicks > 0){
+            var opt = {
+                margin: 1,
+                filename: 'myfile.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 3},
+                jsPDF: { unit: 'cm', format: 'a2', orientation: 'p' },
+                pagebreak: { mode: ['avoid-all'] }
+            };
+            html2pdf().from(document.getElementById("page-content-to-print")).set(opt).save();
+        }
+    }
+    """,
+    Output('dummy-output', 'children'),
+    Input('export-button', 'n_clicks')
+)
 
 # Client-side callback for export to PDF button
 # app.clientside_callback(
@@ -74,6 +94,19 @@ def display_page(pathname):
 #     Output('dummy-output', 'children'),
 #     Input('export-button', 'n_clicks')
 # )
+# app.clientside_callback(
+#     """
+#     function(n_clicks) {
+#         if (n_clicks > 0) {
+#             window.print();
+#         }
+#         return "";
+#     }
+#     """,
+#     Output('dummy-output', 'children'),
+#     Input('export-button', 'n_clicks')
+# )
+
 # Run the app on localhost:8050
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0')

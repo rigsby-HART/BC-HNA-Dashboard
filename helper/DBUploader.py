@@ -60,7 +60,7 @@ class DBUploader:
     def upload_tables(self):
         class Id_Table(self.db_base):
             __tablename__ = "id_table"
-            self.id_table = pd.read_excel('..\\Processed\\Inputs\\Id_file.xlsx')
+            self.id_table = pd.read_excel('..\\inputs\\Id_file.xlsx')
             # self.id_table.columns = ['_'.join(col).strip() for col in self.id_table.columns]
             # pdb.set_trace()
 
