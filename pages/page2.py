@@ -125,6 +125,7 @@ layout = html.Div(children=[
                     # Table
 
                     html.Div([
+                        dbc.Button("Export", id="export-table-1", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table_4a',
                             columns=[{"name": col, "id": col, "deletable": False, "selectable": False} for col in table4a_for_dash.columns],
@@ -142,7 +143,7 @@ layout = html.Div(children=[
                             page_size=10,
                             merge_duplicate_headers=True,
                             # render_cell=render_cell,
-                            export_format="xlsx",
+                            # export_format="xlsx",
                             style_table={
                                           "overflowY": "auto"
 
@@ -180,6 +181,7 @@ layout = html.Div(children=[
                     # Table
 
                     html.Div([
+                        dbc.Button("Export", id="export-table-2", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table_4b',
                             columns=[{"name": [col1, col2], "id": f"{col1}_{col2}", "deletable": False, "selectable": False} for col1, col2 in table4b_for_dash.columns],
@@ -204,7 +206,7 @@ layout = html.Div(children=[
                             page_size=10,
                             merge_duplicate_headers=True,
                             # render_cell=render_cell,
-                            export_format="xlsx",
+                            # export_format="xlsx",
                             style_table={
                                 "overflowY": "auto"
 
@@ -241,6 +243,7 @@ layout = html.Div(children=[
 
 
                     html.Div([
+                        dbc.Button("Export", id="export-table-3", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table5',
                             columns=[{"name": col, "id": col, "deletable": False, "selectable": False}
@@ -259,7 +262,7 @@ layout = html.Div(children=[
                             page_size=10,
                             merge_duplicate_headers=True,
                             # render_cell=render_cell,
-                            export_format="xlsx",
+                            # export_format="xlsx",
                             style_table={
                                 "overflowY": "auto"
 
@@ -297,6 +300,7 @@ layout = html.Div(children=[
                     # Table
 
                     html.Div([
+                        dbc.Button("Export", id="export-table-4", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table_6',
                             columns=[
@@ -323,7 +327,7 @@ layout = html.Div(children=[
                             page_size=10,
                             merge_duplicate_headers=True,
                             # render_cell=render_cell,
-                            export_format="xlsx",
+                            # export_format="xlsx",
                             style_table={
                                           "overflowY": "auto"
 
@@ -361,6 +365,7 @@ layout = html.Div(children=[
                     # Table
 
                     html.Div([
+                        dbc.Button("Export", id="export-table-5", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table7_2006',
                             columns=[{"name": [col1, col2], "id": f"{col1}_{col2}", "deletable": False, "selectable": False} for col1, col2 in table7_2006_for_dash.columns],
@@ -385,7 +390,7 @@ layout = html.Div(children=[
                             page_size=10,
                             merge_duplicate_headers=True,
                             # render_cell=render_cell,
-                            export_format="xlsx",
+                            # export_format="xlsx",
                             style_table={
                                           "overflowY": "auto"
 
@@ -423,6 +428,7 @@ layout = html.Div(children=[
                     # Table
 
                     html.Div([
+                        dbc.Button("Export", id="export-table-6", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table7_2021',
                             columns=[
@@ -449,7 +455,7 @@ layout = html.Div(children=[
                             page_size=10,
                             merge_duplicate_headers=True,
                             # render_cell=render_cell,
-                            export_format="xlsx",
+                            # export_format="xlsx",
                             style_table={
                                 "overflowY": "auto"
 
@@ -486,6 +492,7 @@ layout = html.Div(children=[
 
 
                     html.Div([
+                        dbc.Button("Export", id="export-table-7", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table8',
                             columns=[{"name": [col1, col2], "id": f"{col1}_{col2}", "deletable": False, "selectable": False}
@@ -511,7 +518,7 @@ layout = html.Div(children=[
                             page_size=20,
                             merge_duplicate_headers=True,
                             # render_cell=render_cell,
-                            export_format="xlsx",
+                            # export_format="xlsx",
                             style_table={
                                 "overflowY": "auto"
 
@@ -548,6 +555,7 @@ layout = html.Div(children=[
 
 
                     html.Div([
+                        dbc.Button("Export", id="export-table-8", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table9',
                             columns=[{"name": [col1, col2], "id": f"{col1}_{col2}", "deletable": False, "selectable": False}
@@ -573,7 +581,7 @@ layout = html.Div(children=[
                             page_size=10,
                             merge_duplicate_headers=True,
                             # render_cell=render_cell,
-                            export_format="xlsx",
+                            # export_format="xlsx",
                             style_table={
                                 "overflowY": "auto"
 
@@ -610,6 +618,7 @@ layout = html.Div(children=[
 
 
                     html.Div([
+                        dbc.Button("Export", id="export-table-9", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table10',
                             columns=[{"name": [col1, col2], "id": f"{col1}_{col2}", "deletable": False, "selectable": False}
@@ -635,7 +644,7 @@ layout = html.Div(children=[
                             page_size=10,
                             merge_duplicate_headers=True,
                             # render_cell=render_cell,
-                            export_format="xlsx",
+                            # export_format="xlsx",
                             style_table={
                                 "overflowY": "auto"
 
@@ -672,6 +681,7 @@ layout = html.Div(children=[
 
 
                     html.Div([
+                        dbc.Button("Export", id="export-table-10", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table11',
                             columns=[{"name": [col1, col2], "id": f"{col1}_{col2}", "deletable": False, "selectable": False}
@@ -697,7 +707,7 @@ layout = html.Div(children=[
                             page_size=10,
                             merge_duplicate_headers=True,
                             # render_cell=render_cell,
-                            export_format="xlsx",
+                            # export_format="xlsx",
                             style_table={
                                 "overflowY": "auto"
 
@@ -735,6 +745,7 @@ layout = html.Div(children=[
                     # Table
 
                     html.Div([
+                        dbc.Button("Export", id="export-table-11", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table_12',
                             columns=[{"name": col, "id": col, "deletable": False, "selectable": False} for col in table12_for_dash.columns],
@@ -752,7 +763,7 @@ layout = html.Div(children=[
                             page_size=10,
                             merge_duplicate_headers=True,
                             # render_cell=render_cell,
-                            export_format="xlsx",
+                            # export_format="xlsx",
                             style_table={
                                           "overflowY": "auto"
 
@@ -789,6 +800,7 @@ layout = html.Div(children=[
 
 
                     html.Div([
+                        dbc.Button("Export", id="export-table-12", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table_13',
                             columns=[
@@ -815,7 +827,7 @@ layout = html.Div(children=[
                             page_size=10,
                             merge_duplicate_headers=True,
                             # render_cell=render_cell,
-                            export_format="xlsx",
+                            # export_format="xlsx",
                             style_table={
                                 "overflowY": "auto"
 
@@ -853,6 +865,7 @@ layout = html.Div(children=[
                     # Table
 
                     html.Div([
+                        dbc.Button("Export", id="export-table-13", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table_14',
                             columns=[{"name": col, "id": col, "deletable": False, "selectable": False} for col in table14_for_dash.columns],
@@ -870,7 +883,7 @@ layout = html.Div(children=[
                             page_size=10,
                             merge_duplicate_headers=True,
                             # render_cell=render_cell,
-                            export_format="xlsx",
+                            # export_format="xlsx",
                             style_table={
                                           "overflowY": "auto"
 
@@ -908,6 +921,7 @@ layout = html.Div(children=[
                     # Table
 
                     html.Div([
+                        dbc.Button("Export", id="export-table-14", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table_15',
                             columns=[{"name": col, "id": col, "deletable": False, "selectable": False} for col in
@@ -926,7 +940,7 @@ layout = html.Div(children=[
                             page_size=10,
                             merge_duplicate_headers=True,
                             # render_cell=render_cell,
-                            export_format="xlsx",
+                            # export_format="xlsx",
                             style_table={
                                 "overflowY": "auto"
 
@@ -964,6 +978,7 @@ layout = html.Div(children=[
                     # Table
 
                     html.Div([
+                        dbc.Button("Export", id="export-table-15", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table_16',
                             columns=[{"name": col, "id": col, "deletable": False, "selectable": False} for col in table16_for_dash.columns],
@@ -981,7 +996,7 @@ layout = html.Div(children=[
                             page_size=10,
                             merge_duplicate_headers=True,
                             # render_cell=render_cell,
-                            export_format="xlsx",
+                            # export_format="xlsx",
                             style_table={
                                           "overflowY": "auto"
 
@@ -1017,6 +1032,19 @@ layout = html.Div(children=[
 
 ], className='background-lgeo'
 )
+
+tables = {
+    1: table4a_for_dash,
+    2: table4b_for_dash,
+    # Add other tables here
+}
+
+# Function to get table by ID
+def get_table_by_id():
+    return table4a_for_dash
+    # print(tables.get(table_id))
+    # # pdb.set_trace()
+    # return tables.get(table_id)
 
 def generate_style_data_conditional(data):
 
@@ -1193,6 +1221,7 @@ def update_table_4a(geo, geo_c, scale, selected_columns):
         # col_list = []
         # pdb.set_trace()
         table_columns = [{"name": [geo, col], "id": col} for col in table.columns]
+        # print(table_columns)
         # additional_header = [
         #     {
         #         'if': {'header_index': 1},
@@ -1344,7 +1373,7 @@ def update_table_4b(geo, geo_c, scale, selected_columns):
     Input('area-scale-store', 'data'),
     Input('table5', 'selected_columns'),
 )
-def update_table5(geo, geo_c, scale, selected_columns):
+def update_table_5(geo, geo_c, scale, selected_columns):
     # Single area mode
     # print(geo)
     if geo == geo_c or geo_c == None or (geo == None and geo_c != None):
@@ -1527,7 +1556,7 @@ def update_table_6(geo, geo_c, scale, selected_columns):
     Input('area-scale-store', 'data'),
     Input('table7_2006', 'selected_columns'),
 )
-def update_table7_2006(geo, geo_c, scale, selected_columns):
+def update_table_7a(geo, geo_c, scale, selected_columns):
     # Single area mode
     # print(geo)
     if geo == geo_c or geo_c == None or (geo == None and geo_c != None):
@@ -1630,7 +1659,7 @@ def update_table7_2006(geo, geo_c, scale, selected_columns):
     Input('area-scale-store', 'data'),
     Input('table7_2021', 'selected_columns'),
 )
-def update_table7_2021(geo, geo_c, scale, selected_columns):
+def update_table_7b(geo, geo_c, scale, selected_columns):
     # Single area mode
     # print(geo)
     if geo == geo_c or geo_c == None or (geo == None and geo_c != None):
@@ -1731,7 +1760,7 @@ def update_table7_2021(geo, geo_c, scale, selected_columns):
     Input('area-scale-store', 'data'),
     Input('table8', 'selected_columns'),
 )
-def update_table8(geo, geo_c, scale, selected_columns):
+def update_table_8(geo, geo_c, scale, selected_columns):
     # Single area mode
     # print(geo)
     if geo == geo_c or geo_c == None or (geo == None and geo_c != None):
@@ -1851,7 +1880,7 @@ def update_table8(geo, geo_c, scale, selected_columns):
     Input('area-scale-store', 'data'),
     Input('table9', 'selected_columns'),
 )
-def update_table9(geo, geo_c, scale, selected_columns):
+def update_table_9(geo, geo_c, scale, selected_columns):
     # Single area mode
     # print(geo)
     if geo == geo_c or geo_c == None or (geo == None and geo_c != None):
@@ -1945,7 +1974,7 @@ def update_table9(geo, geo_c, scale, selected_columns):
     Input('area-scale-store', 'data'),
     Input('table10', 'selected_columns'),
 )
-def update_table10(geo, geo_c, scale, selected_columns):
+def update_table_10(geo, geo_c, scale, selected_columns):
     # Single area mode
     # print(geo)
     if geo == geo_c or geo_c == None or (geo == None and geo_c != None):
@@ -2040,7 +2069,7 @@ def update_table10(geo, geo_c, scale, selected_columns):
     Input('area-scale-store', 'data'),
     Input('table11', 'selected_columns'),
 )
-def update_table11(geo, geo_c, scale, selected_columns):
+def update_table_11(geo, geo_c, scale, selected_columns):
     # Single area mode
     # print(geo)
     if geo == geo_c or geo_c == None or (geo == None and geo_c != None):
