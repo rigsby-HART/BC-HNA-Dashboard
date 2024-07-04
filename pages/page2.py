@@ -104,9 +104,9 @@ layout = html.Div(children=[
     dcc.Store(id='comparison-area', storage_type='local'),
 
     # Add the Export to PDF button
-    # dbc.Button("Export as PDF", id="export-button", className="mb-3", color="primary"),
+    dbc.Button("Export to PDF", id="export-button", className="mb-3", color="primary"),
 
-    # html.Div(id='dummy-output', style={'display': 'none'}),
+    html.Div(id='dummy-output', style={'display': 'none'}),
 
     html.Div(id='page-content-to-print',
             children=[
@@ -2567,6 +2567,16 @@ def update_table_15(geo, geo_c, scale, selected_columns):
                 # 'rowSpan': 2
 
             } for j in table_columns
+        ] + [
+            {
+                'if': {'row_index': len(new_table)-1, 'column_id': j['id']},
+                'border-bottom': '1px solid #002145',
+                'border-left': '1px solid #002145',
+                'border-right': '1px solid #002145',
+
+                # 'rowSpan': 2
+
+            } for j in table_columns
         ]
         style_data_conditional.extend(add_total_style)
         return table_columns, new_table.to_dict('records'), style_data_conditional, style_cell_conditional, style_header_conditional
@@ -2616,6 +2626,12 @@ def update_table_16(geo, geo_c, scale, selected_columns):
             index_5yr, index_20yr = table['5 Year Need'].index[-2], table['20 Year Need'].index[-1]
             table['5 Year Need'][index_5yr] = '{:,.0f}'.format(float(table['5 Year Need'][index_5yr]))
             table['20 Year Need'][index_20yr] = '{:,.0f}'.format(float(table['20 Year Need'][index_20yr]))
+
+            for idx in table.index:
+                if idx != index_5yr:
+                    table.at[idx, '5 Year Need'] = '{:,.3f}'.format(float(table.at[idx, '5 Year Need']))
+                if idx != index_20yr:
+                    table.at[idx, '20 Year Need'] = '{:,.3f}'.format(float(table.at[idx, '20 Year Need']))
 
         # min_index = table['Component'].index[0]
         # print(min_index)
@@ -2669,7 +2685,24 @@ def update_table_16(geo, geo_c, scale, selected_columns):
             'color': '#000000'
 
         } for j in table_columns
-    ]
+    ] + [
+            {
+                'if': {'row_index': len(table) - 1 , 'column_id': j},
+                'backgroundColor': '#74d3f9',
+                'color': '#74d3f9',
+            }
+            for j in ['5 Year Need']
+
+        ] + [
+            {
+                'if': {'row_index': len(table) - 2 , 'column_id': j},
+                'backgroundColor': '#74d3f9',
+                'color': '#74d3f9',
+            }
+            for j in ['20 Year Need']
+
+        ]
+        # style_data_conditional.extend(merge_data_style)
         new_data_style = generate_additional_data_style(table, table_columns)
         style_data_conditional.extend(new_data_style)
         style_data_conditional.extend(add_style_5_year)

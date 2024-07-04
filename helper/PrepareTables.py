@@ -6,8 +6,8 @@ import warnings
 warnings.filterwarnings('ignore')
 import numpy as np
 
-filepath = '..\\Processed\\Throughputs\\'
-throughputs_path = filepath + "ForQA_20240626"
+# filepath = '..\\throughputs\\'
+throughputs_path = '..\\throughputs\\'
 class PrepareTables:
     def __init__(self, master_csd_filepath, master_cd_filepath, formulas_filepath):
         self.master_csd_filepath = master_csd_filepath
@@ -917,10 +917,10 @@ class PrepareTables:
         reg = temp.copy()
         reg['Growth Scenarios'] = 'Regionally Based Household Growth'
         # pdb.set_trace()
-        reg['New Units'] = (reg['Regional Growth Rate'] / 100) * reg['2021 CSD Household Estimate']
-        reg['2041 Projection'] = reg['2021 CSD Household Estimate'] + reg['New Units']
+        reg['New Units'] = (reg['Regional Growth Rate'] / 100) * reg['2021 CSD Household']
+        reg['2041 Projection'] = reg['2021 CSD Household'] + reg['New Units']
         reg = reg[
-            ['GEOUID_CSD', 'Municipality', 'Growth Scenarios', 'Regional Growth Rate', '2021 CSD Household Estimate',
+            ['GEOUID_CSD', 'Municipality', 'Growth Scenarios', 'Regional Growth Rate', '2021 CSD Household',
              '2041 Projection', 'New Units']]
         reg.columns = ['GEOUID', 'Municipality', 'Growth Scenarios', 'Regional Growth Rate', 'Projection, 2021',
                        'Projection, 2041', 'New Units']
@@ -929,9 +929,9 @@ class PrepareTables:
         loc = temp.copy()
         loc['Growth Scenarios'] = 'Local Household Growth'
         loc['Regional Growth Rate'] = "n/a"
-        loc['New Units'] = loc['2041 CSD Household Projection'] - loc['2021 CSD Household Estimate']
+        loc['New Units'] = loc['2041 CSD Household Projection'] - loc['2021 CSD Household']
         loc = loc[
-            ['GEOUID_CSD', 'Municipality', 'Growth Scenarios', 'Regional Growth Rate', '2021 CSD Household Estimate',
+            ['GEOUID_CSD', 'Municipality', 'Growth Scenarios', 'Regional Growth Rate', '2021 CSD Household',
              '2041 CSD Household Projection', 'New Units']]
         loc.columns = ['GEOUID', 'Municipality', 'Growth Scenarios', 'Regional Growth Rate', 'Projection, 2021',
                        'Projection, 2041', 'New Units']
@@ -1057,7 +1057,7 @@ class PrepareTables:
              '2026 Projection', 'New Units']]
         reg.columns = ['GEOUID', 'Municipality', 'Growth Scenarios', 'Regional Growth Rate', 'Projection, 2021',
                        'Projection, 2026', 'New Units']
-
+        # pdb.set_trace()
         # Build local rows
         loc = temp.copy()
         loc['Growth Scenarios'] = 'Local Household Growth'
@@ -1068,7 +1068,7 @@ class PrepareTables:
              '2026 CSD Household Projection', 'New Units']]
         loc.columns = ['GEOUID', 'Municipality', 'Growth Scenarios', 'Regional Growth Rate', 'Projection, 2021',
                        'Projection, 2026', 'New Units']
-
+        # pdb.set_trace()
         # Build average rows
         reg_units = reg[['GEOUID', 'New Units']]
         loc_units = loc[['GEOUID', 'New Units']]
@@ -1085,7 +1085,7 @@ class PrepareTables:
         total['Growth Scenarios'] = 'Total New Units - 5 years'
         avg_df.reset_index(inplace=True)
         total.reset_index(inplace=True)
-
+        # pdb.set_trace()
         # Now reorganize data to match table format
         result_df = reg.append(loc).append(avg_df[['GEOUID', 'Municipality', 'Growth Scenarios', 'New Units']]).append(
             total)
