@@ -96,7 +96,7 @@ def download_xlsx(*args):
     if not triggered_id.startswith("export-table"):
         return no_update
 
-    print(ctx.triggered)
+    # print(ctx.triggered)
 
     # if ctx.triggered[0]["value"] == 0:
     #     return no_update
