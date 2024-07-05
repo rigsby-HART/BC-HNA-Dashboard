@@ -1168,7 +1168,9 @@ def number_formatting(df, col_list, precision):
 def percent_formatting(df, col_list, mult_flag):
     if mult_flag == 0:
         for cols in col_list:
-            df[cols] = df[cols].apply(lambda x: f"{x:.3%}" if pd.notnull(x) and x != 'n/a' else x)
+            # df[cols] = df[cols].map('{:,.3f}%'.format)
+            df[cols] = df[cols].apply(lambda x: f"{x:.3f}%" if pd.notna(x) and x != 'n/a' else x)
+            # df[cols] = df[cols].apply(lambda x: f"{x:.3%}" if pd.notnull(x) and x != 'n/a' else x)
     else:
         for cols in col_list:
             df[cols] = df[cols].apply(lambda x: f"{x*100:.3%}" if pd.notnull(x) and x != 'n/a' else x)
@@ -1487,7 +1489,8 @@ def update_table_6(geo, geo_c, scale, selected_columns):
         # Generating table
         table = table_generator(geo, table_6, "table_6")
         # table[('Local Population', '% of region')] = table[('Local Population', '% of region')].apply(lambda x: f"{x*100:.3%}" if pd.notna(x) else x)
-        table = percent_formatting(table, [('Local Population', '% of region')], 1)
+        # table = percent_formatting(table, [('Local Population', '% of region')], 0)
+        table[('Local Population', '% of region')] = table[('Local Population', '% of region')].apply(lambda x: f"{x*10:.3f}%" if pd.notna(x) and x != 'n/a' else x)
         table = number_formatting(table, [('Local Population', '#'), ('', 'Regional PEH')], 0)
         table = number_formatting(table, [('', 'Proportional Local PEH')], 3)
         # pdb.set_trace()
@@ -1911,7 +1914,11 @@ def update_table_9(geo, geo_c, scale, selected_columns):
         table = number_formatting(table, [('2006 Population', 'Total'),
                                           ('2006 Households', 'Owner'), ('2006 Households', 'Renter')], 0)
 
-        table = percent_formatting(table, [('2006 Headship Rate', 'Owner'), ('2006 Headship Rate', 'Renter')], 1)
+        # table = percent_formatting(table, [('2006 Headship Rate', 'Owner'), ('2006 Headship Rate', 'Renter')], 0)
+        table[('2006 Headship Rate', 'Owner')] = table[('2006 Headship Rate', 'Owner')].apply(
+            lambda x: f"{x * 100:.3f}%" if pd.notna(x) and x != 'n/a' else x)
+        table[('2006 Headship Rate', 'Renter')] = table[('2006 Headship Rate', 'Renter')].apply(
+            lambda x: f"{x * 100:.3f}%" if pd.notna(x) and x != 'n/a' else x)
         # table[('2006 Headship Rate', 'Owner')] = (table[('2006 Headship Rate', 'Owner')] * 100).astype(str) + '%'
         # table[('2006 Headship Rate', 'Renter')] = (table[('2006 Headship Rate', 'Renter')] * 100).astype(str) + '%'
         style_data_conditional = generate_style_data_conditional(table)
@@ -2005,7 +2012,10 @@ def update_table_10(geo, geo_c, scale, selected_columns):
         table = number_formatting(table, [('2021 Population', 'Total')], 0)
         table = number_formatting(table, [('2021 Potential Households', 'Owner'), ('2021 Potential Households', 'Renter')], 3)
 
-        table = percent_formatting(table, [('2006 Headship Rate', 'Owner'), ('2006 Headship Rate', 'Renter')], 1)
+        table[('2006 Headship Rate', 'Owner')] = table[('2006 Headship Rate', 'Owner')].apply(
+            lambda x: f"{x * 100:.3f}%" if pd.notna(x) and x != 'n/a' else x)
+        table[('2006 Headship Rate', 'Renter')] = table[('2006 Headship Rate', 'Renter')].apply(
+            lambda x: f"{x * 100:.3f}%" if pd.notna(x) and x != 'n/a' else x)
 
         # table[('2006 Headship Rate', 'Owner')] = (table[('2006 Headship Rate', 'Owner')] * 100).astype(str) + '%'
         # table[('2006 Headship Rate', 'Renter')] = (table[('2006 Headship Rate', 'Renter')] * 100).astype(str) + '%'
