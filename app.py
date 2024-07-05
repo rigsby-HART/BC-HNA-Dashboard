@@ -30,6 +30,7 @@ server = app.server
     Input('url', 'pathname')
 )
 def display_page(pathname):
+    # geo_value = "SampleGeoName"  # Default geo value for demonstration
     if pathname == '/page1':
         return page1.layout
     elif pathname == '/page2':
@@ -45,11 +46,11 @@ def display_page(pathname):
 
 app.clientside_callback(
      """
-    function(n_clicks){
-        if(n_clicks > 0){
+    function(n_clicks, geo){
+        if (n_clicks > 0 && geo){
             var opt = {
                 margin: 1,
-                filename: 'myfile.pdf',
+                filename: geo + '.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 3},
                 jsPDF: { unit: 'cm', format: 'a2', orientation: 'p' },
@@ -60,7 +61,8 @@ app.clientside_callback(
     }
     """,
     Output('dummy-output', 'children'),
-    Input('export-button', 'n_clicks')
+    Input('export-button', 'n_clicks'),
+    State('main-area', 'data')
 )
 
 table_functions = {
