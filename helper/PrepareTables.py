@@ -268,6 +268,7 @@ class PrepareTables:
     def prepare_table_11(self, table_7_2021, table_10):
         print("Preparing Table 11...")
         updated_table_7_2021 = table_7_2021.groupby([('GEOUID', ''), ('Municipality', '')]).apply(self.clean_table_11_data).reset_index(drop=True)
+        # pdb.set_trace()
 
         # To check if 2 rows are removed (75 to 84 years, 85 years and over) and one row is added (75 years or more)
         assert len(updated_table_7_2021) == len(table_7_2021) - table_7_2021[('Municipality', '')].nunique(), "Age merging failed"
@@ -742,9 +743,16 @@ class PrepareTables:
         result_df = alldata[['GEOUID_CSD', 'GEOUID_CD', 'Municipality', 'Local Population, 2021', 'Regional Population',
                              'Regional PEH']]
         result_df = result_df.dropna(subset=['GEOUID_CSD', 'GEOUID_CD'], how='all')
-        result_df.loc[~result_df['Local Population, 2021'].isna(), '% of region'] = result_df[
-                                                                                        'Local Population, 2021'].astype(
-            float) / result_df['Regional Population'].astype(int)
+        # Replace NaN values in 'Regional Population' with 0 (or another placeholder value)
+        result_df['Regional Population'] = result_df['Regional Population'].fillna(0).astype(int)
+
+        # Perform the division operation and assign the result
+        result_df.loc[~result_df['Local Population, 2021'].isna(), '% of region'] = (
+                result_df['Local Population, 2021'].astype(float) / result_df['Regional Population']
+        )
+
+        # Optionally, handle cases where Regional Population was originally NaN (now 0) to avoid division by zero
+        result_df.loc[result_df['Regional Population'] == 0, '% of region'] = float('nan')
         result_df['Proportional Local PEH'] = result_df['% of region'] * result_df['Regional PEH']
 
         column_order = ['GEOUID_CSD', 'Municipality', 'Regional Population', 'Local Population, 2021', '% of region',
@@ -1113,9 +1121,9 @@ class PrepareTables:
     def apply_formula(input_df, formula_df):
         clean_input_df = input_df.copy()
         clean_formula_df = formula_df.copy()
-        clean_formula_df['Numerator Indices'] = clean_formula_df['Numerator'].apply(lambda x: [int(i) + 3 for i in str(x).split(',')])
+        clean_formula_df['Numerator Indices'] = clean_formula_df['Numerator'].apply(lambda x: [int(i) + 4 for i in str(x).split(',')])
         clean_formula_df['Denominator Indices'] = clean_formula_df['Denominator'].apply(
-            lambda x: [int(i) + 3 for i in str(x).split(',') if x is not None] if pd.notna(x) else []
+            lambda x: [int(i) + 4 for i in str(x).split(',') if x is not None] if pd.notna(x) else []
         )
 
         results_df = pd.DataFrame(index=clean_input_df.index)
@@ -1124,7 +1132,8 @@ class PrepareTables:
             denominator_indices = row['Denominator Indices']
             formula_class = row['Formula Class']
             output_column = row['Output']
-            # pdb.set_trace()
+            # if output_column == 'Local primary rental market vacany rate':
+            #     pdb.set_trace()
             numerator_values = clean_input_df.iloc[:, numerator_indices].sum(axis=1)
             try:
                 denominator_values = clean_input_df.iloc[:, denominator_indices].sum(axis=1)
@@ -1135,6 +1144,8 @@ class PrepareTables:
 
             result = pd.Series([None] * len(clean_input_df), index=clean_input_df.index)
             valid_mask = (denominator_values != 0) & denominator_values.apply(lambda x: isinstance(x, (int, float)))
+            # if output_column == "Percent of owners with a mortgage in ECHN, 2021":
+            #     pdb.set_trace()
             if formula_class == 1:
                 result[valid_mask] = (numerator_values[valid_mask] / denominator_values[valid_mask]) * 100
                 # pdb.set_trace()

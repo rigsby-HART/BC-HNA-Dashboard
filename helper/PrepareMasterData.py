@@ -1,14 +1,16 @@
 import pdb
 import os
 import pandas as pd
+import numpy as np
 from openpyxl import load_workbook
 # from openpyxl.utils.dataframe import dataframe_to_rows
 # from openpyxl.worksheet.table import Table, TableStyleInfo
-filepath = '.\\Source\\New Source Files\\'
+filepath = '..\\Source\\New Source Files\\'
 
 source_filepath = filepath + 'BCData_LGeo_June_24_2024.xlsx'
-required_muni_filepath = filepath + 'Demand_Buffer_Clean_24_06_24.xlsx'
-output_filepath = '.\\Processed\\Inputs\\BCData_LGeo_June2024_Master_20240626.xlsx'
+demand_factor_filepath = filepath + 'Demand_Buffer_Clean_24_06_24.xlsx'
+# pdb.set_trace()
+output_filepath = os.path.join(os.getcwd(), 'inputs\\BCData_LGeo_June2024_Master_20240708.xlsx')
 
 census_2006_df = pd.read_excel(source_filepath, sheet_name='Census of Population_2006', header=[0, 1, 2])
 census_2011_df = pd.read_excel(source_filepath, sheet_name='Census of Population_2011', header=[0, 1, 2])
@@ -17,7 +19,7 @@ census_2021_df = pd.read_excel(source_filepath, sheet_name='Census of Population
 peh_df = pd.read_excel(source_filepath, sheet_name='PEH_2021_HB')
 projections_df = pd.read_excel(source_filepath, sheet_name='Projections_2021-2041')
 vacancy_df = pd.read_excel(source_filepath, sheet_name='VacancyRate_2021')
-required_muni = pd.read_excel(required_muni_filepath, sheet_name='DBuff')
+demand_factor_df = pd.read_excel(demand_factor_filepath, sheet_name='DBuff')
 
 
 def rename_columns(df):
@@ -43,20 +45,21 @@ census_2021_df = rename_columns(census_2021_df)
 peh_df = to_multi_level_columns(peh_df)
 projections_df = to_multi_level_columns(projections_df)
 vacancy_df = to_multi_level_columns(vacancy_df)
-required_muni = to_multi_level_columns(required_muni)
-# pdb.set_trace()
+demand_factor_df = to_multi_level_columns(demand_factor_df)
+
 
 merge_col = ('', 'GEOUID', '')
-merged_df = required_muni.merge(census_2006_df, how='left', left_on=[('', 'GEO_ID', '')], right_on=[merge_col], suffixes=('', '_2006')) \
-                        .merge(census_2011_df, how='left', on=[merge_col], suffixes=('', '_2011')) \
+# pdb.set_trace()
+merged_df = census_2006_df.merge(census_2011_df, how='left', on=[merge_col], suffixes=('', '_2011')) \
                         .merge(census_2016_df, how='left', on=[merge_col], suffixes=('', '_2016')) \
-                        .merge(census_2021_df, how='left', on=[merge_col], suffixes=('', '_2021'))
+                        .merge(census_2021_df, how='left', on=[merge_col], suffixes=('', '_2021')) \
+                        .merge(demand_factor_df, how='left', right_on=[('', 'GEO_ID', '')], left_on=[merge_col], suffixes=('', '_df'))
 # merged_df[('', 'CDID', '')] = pd.to_numeric(merged_df[merge_col].apply(lambda x: str(x)[:4] if len(str(x)) >= 4 else ""), errors='coerce')
 
-if len(required_muni) > len(merged_df):
-    print('Double check the Geouids, some rows might have dropped...')
-elif len(required_muni) < len(merged_df):
-    print('Double check the Geouids, the rows are duplicated...')
+if len(merged_df) > len(census_2021_df):
+    print("Double check the Geouids, the rows are duplicated...")
+elif len(merged_df) < len(census_2021_df):
+    print("Double check the join, some rows are dropped...")
 else:
     print("The join was successfull...")
 
@@ -66,17 +69,21 @@ else:
 all_df = merged_df.merge(peh_df, how='left', left_on=[('', 'CD_ID', '')], right_on=[('', 'GeoUID', '')]).merge(
     projections_df, left_on=[merge_col], right_on=[('', 'GeoUID', '')]).merge(vacancy_df, left_on=[merge_col],
                                                                               right_on=[('', 'GeoUID', '')])
+all_df[('_x', 'Municipality', '_x')] = all_df[('_x', 'Municipality', '_x')].fillna(all_df[('', 'Geography Name', '')])
+all_df[('_x', 'Regional District', '_x')] = all_df[('_x', 'Regional District', '_x')].fillna(all_df[('', 'Geography Name', '')])
+all_df[('_x', 'CD_ID', '_x')] = all_df[('_x', 'CD_ID', '_x')].fillna(all_df[('', 'GEOUID', '')].astype(str).str[:4]).astype(int)
 # all_df.to_csv(r"L:\Projects\22005 - Housing Needs Assessment\Processed\HART_2024\Archive\test_df.csv")
+
 # pdb.set_trace()
 
-columns_to_remove = [('_x', 'GEOUID', '_x'), ('_x', 'GEO_ID', '_x'), ('Total', 'Demand factor', 2021),
-                     ('_x', 'NameTypeUID', '_x'), ('_x', 'Name', '_x'), ('_x', 'Type', '_x'),
+columns_to_remove = [('_x', 'GEOUID', '_x'), ('_x', 'NameTypeUID', '_x'), ('_x', 'Name', '_x'), ('_x', 'Type', '_x'),
+                     ('_2021', 'NameTypeUID', '_2021'), ('_2021', 'Name', '_2021'), ('_2021', 'Type', '_2021'),
                      ('_2011', 'NameTypeUID', '_2011'), ('_2011', 'Name', '_2011'), ('_2011', 'Type', '_2011'),
                      ('_2016', 'NameTypeUID', '_2016'), ('_2016', 'Name', '_2016'), ('_2016', 'Type', '_2016'),
-                     ('_2021', 'NameTypeUID', '_2021'), ('_2021', 'Name', '_2021'), ('_2021', 'Type', '_2021'),
-                     ('_x', 'GeoUID', '_x'), ('_x', 'Geography Name', '_x'),
-                     ('_x', 'Geography Type', '_x'), ('_y', 'GeoUID', '_y'), ('_y', 'Geography Name', '_y'),
-                     ('_y', 'Geography Type', '_y'), ('_y', 'GeoUID', '_y'), ('', 'GeoUID', ''),
+                     ('_x', 'GEO_ID', '_x'), ('_x', 'Geography Name', '_x'),
+                     ('_x', 'GeoUID', '_x'), ('_x', 'Geography Type', '_x'),
+                     ('_y', 'GeoUID', '_y'), ('_y', 'Geography Name', '_y'),
+                     ('_y', 'Geography Type', '_y'), ('_y', 'GeoUID', '_y'),
                      ('', 'GeoUID', ''), ('', 'Geography Name', ''), ('', 'Geography Type', '')
                      ]
 # pdb.set_trace()
@@ -84,13 +91,34 @@ columns_to_remove = [('_x', 'GEOUID', '_x'), ('_x', 'GEO_ID', '_x'), ('Total', '
 def remove_suffixes(columns):
     new_columns = []
     for col in columns:
-        new_col = tuple('' if part in ('_y', '_x', '_2006') else part for part in col)
+        new_col = tuple('' if part in ('_y', '_x') else part for part in col)
         new_columns.append(new_col)
     return pd.MultiIndex.from_tuples(new_columns)
 
 
 final_df = all_df.loc[:, ~all_df.columns.isin(columns_to_remove)]
 final_df.columns = remove_suffixes(final_df.columns)
+final_df[('', 'Demand Factor', '')] = final_df[('', 'Demand Factor', '')].fillna(0)
+
+homelessness_column = ('', 'Number of People who Experienced Homelessness, 2021', '')
+final_df['Homelessness_Filled'] = final_df[homelessness_column]
+# Group by CD_ID and fill missing values
+final_df['Homelessness_Filled'] = final_df.groupby([('', 'CD_ID', '')])['Homelessness_Filled'].transform(lambda x: x.fillna(method='ffill').fillna(method='bfill'))
+final_df[homelessness_column] = final_df['Homelessness_Filled'].fillna(0)
+final_df.drop(columns=['Homelessness_Filled'], inplace=True)
+
+final_df.iloc[:, 326] = final_df.iloc[:, 326].replace('No data', 0).replace('X', 0)
+
+municipalities = ['Nanaimo', 'Powell River', 'Northern Rockies']
+
+# Define the conditions and apply the replacement
+final_df[('', 'Municipality', '')] = final_df.apply(
+    lambda row: row[('', 'Municipality', '')] + ' ' if row[('', 'Municipality', '')] in municipalities and len(str(row[('', 'GEOUID', '')])) == 4 else row[('', 'Municipality', '')], axis=1
+)
+
+# Arranging the dataframe in desired column sequence
+final_df = final_df.iloc[:, np.r_[0, 327, 329:331, 1:327, 328, 331:336]]
+
 final_df.to_excel(output_filepath)
 
 wb = load_workbook(output_filepath)
@@ -118,5 +146,5 @@ for col_num, col in enumerate(final_df.columns, 1):
 wb.save(output_filepath)
 
 
-id_file = required_muni.drop(columns=[('', 'Demand Factor', '')], axis=1)
-id_file.to_excel('.\\Processed\\Inputs\\Id_file.xlsx')
+id_file = demand_factor_df.drop(columns=[('', 'Demand Factor', '')], axis=1)
+id_file.to_excel(os.path.join(os.getcwd(), 'inputs\\Id_file.xlsx'))

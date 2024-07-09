@@ -31,7 +31,7 @@ engine_old = create_engine('sqlite:///sources//old_hart.db')
 # income_category = income_category.rename(columns={'Formatted Name': 'Geography'})
 # joined_df = income_category.merge(df_partners, how='left', on='Geography')
 
-geo_info = pd.read_sql_table('id_table', engine_new.connect())
+# geo_info = pd.read_sql_table('id_table', engine_new.connect())
 # Importing Geo Code Information
 
 mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_old.connect())

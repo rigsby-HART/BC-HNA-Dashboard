@@ -24,7 +24,7 @@ class DBUploader:
 
     def __call__(self):
 
-        self.insert_data(self.id_table, self.Id_Table)
+        # self.insert_data(self.id_table, self.Id_Table)
         # Preparing Section A
         self.insert_data(self.table_4a_new, self.Table_4a)
         self.insert_data(self.table_4b_new, self.Table_4b)
@@ -58,29 +58,33 @@ class DBUploader:
 
 
     def upload_tables(self):
-        class Id_Table(self.db_base):
-            __tablename__ = "id_table"
-            self.id_table = pd.read_excel('..\\inputs\\Id_file.xlsx')
-            # self.id_table.columns = ['_'.join(col).strip() for col in self.id_table.columns]
-            # pdb.set_trace()
-
-            # Define your primary key
-            GEOID = Column(Integer, primary_key=True, comment='primary key')
-
-            # Dynamically add columns based on the DataFrame columns
-            for col in self.id_table.columns:
-                if col == 'GEODID':
-                    continue
-                elif col == 'CD_ID':
-                    vars()[col] = Column(Integer)
-                else:
-                    vars()[col] = Column(String)
-
-        self.Id_Table = Id_Table  # Save the class to use later
+        # class Id_Table(self.db_base):
+        #     __tablename__ = "id_table"
+        #     self.id_table = pd.read_excel('..\\inputs\\Id_file.xlsx')
+        #     print(self.id_table[1:])
+        #
+        #     # self.id_table.columns = ['_'.join(col).strip() for col in self.id_table.columns]
+        #     pdb.set_trace()
+        #
+        #     # Define your primary key
+        #     GEOID = Column(Integer, primary_key=True, comment='primary key')
+        #
+        #     # Dynamically add columns based on the DataFrame columns
+        #     for col in self.id_table.columns:
+        #         if col == 'GEODID':
+        #             continue
+        #         elif col == 'CD_ID':
+        #             vars()[col] = Column(Integer)
+        #         else:
+        #             vars()[col] = Column(String)
+        #
+        # self.Id_Table = Id_Table  # Save the class to use later
 
         class Table_4a(self.db_base):
             __tablename__ = "table_4a_new"
             self.table_4a, _ = self.pt.prepare_table_4()
+            # print(self.table_4a.columns)
+            # pdb.set_trace()
             self.table_4a_new = self.table_4a.replace('x', np.nan)
             self.table_4a_new.columns = self.table_4a_new.columns.map(str)
             # print(self.table_4a_new, self.table_4a_new.dtypes)
