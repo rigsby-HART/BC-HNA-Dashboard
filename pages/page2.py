@@ -110,21 +110,53 @@ layout = html.Div(children=[
 
     html.Div(id='page-content-to-print',
             children=[
+                # Introduction
+                html.H3(children=html.Strong('Calculating 20-year housing need'),
+                        id='visualization3'),
+                # Description
+                html.Div([
+                    html.H6(children=[
+                        """The following tables calculate 20-year and 5-year housing need according to provincial guidelines. Each table follows these guidelines exactly 
+                        with the intention that the tables can be directly included in the required interim housing needs report (or included as an addendum to an existing 
+                        housing needs report). HART has produced this calculator to support communities in British Columbia satisfy a provincial requirement for interim housing 
+                        needs reports. Methodologies for housing needs reports can vary widely, and while HART supports the standardization of methodologies for the purpose of 
+                        provincial or national reporting, we did not have a role in developing the methodology, nor do we unequivocally endorse it. You can learn more about the 
+                        HART methodology and what it can tell you about your community on our """,
+                        html.A("Housing Needs Assessment Tool page.",
+                               href="https://hart.ubc.ca/housing-needs-assessment-tool/",
+                               ),
+                        html.Br(),
+                        html.Ul([
+                            html.Li([
+                                """A note on terminology : we use the term RDA, where the province uses the term Electoral Area. For all intents and purposes, 
+                                these are interchangeable in the calculator."""
+                            ]),
+                            html.Li([
+                                """A note on rounding: """,
+                                html.A("per provincial guidelines", href="https://www2.gov.bc.ca/assets/gov/housing-and-tenancy/tools-for-government/uploads/hnr_method_technical_guidelines.pdf",
+                                       style={'fontWeight': 'bold'}),
+                                """, the figures in Components A-F are not rounded and are shown to two decimal places. Total housing need 
+                                is rounded in Table 13 to the nearest whole number, per guidelines."""
+                            ])
+                        ])
+                    ])
+                ], className='muni-reg-text-lgeo'),
 
-                # Table 1a
                 html.Div([
                     # Title
-                    html.H3(children=html.Strong('Housing units and extreme core housing need, Table 1.a'),
+                    html.H3(children=html.Strong('Component A: Extreme core housing need calculation'),
                             id='visualization3'),
-                    # Description
+                    # Component Description
                     html.Div([
                         html.H6(
-                            'No text for now...')
+                            'The following tables calculate the new homes required to meet existing Extreme Core Housing Need (ECHN) according to provincial guidelines. ')
                     ], className='muni-reg-text-lgeo'),
 
-                    # Table
+                    # Table 1a
 
                     html.Div([
+                        html.H6(
+                            'The following table shows total owner and renter households in the four previous census years (Step 1).'),
                         dbc.Button("Export", id="export-table-1", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table_4a',
@@ -160,27 +192,17 @@ layout = html.Div(children=[
 
                                           }
                         ),
+                        html.Figcaption("Table 1a", style={'fontStyle': 'italic', 'fontSize': '14px', 'textAlign': 'center'}),
                         html.Div(id='table_4a-container')
                     ], className='pg2-table-lgeo'
 
                     ),
 
-                ], className='pg2-table-plot-box-lgeo'),
-
-                # Table 1b
-                html.Div([
-                    # Title
-                    html.H3(children=html.Strong('Housing units and extreme core housing need, Table 1.b'),
-                            id='visualization3'),
-                    # Description
+                    # Table 1b
                     html.Div([
                         html.H6(
-                            'No text for now...')
-                    ], className='muni-reg-text-lgeo'),
-
-                    # Table
-
-                    html.Div([
+                            'The following table shows the total number and proportion of owners with a mortgage and renter households in ECHN in the four previous census years, '
+                            'to arrive at an average ECHN rate (Step 2). Please note that data for owners with a mortgage is only available for 2021.'),
                         dbc.Button("Export", id="export-table-2", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table_4b',
@@ -223,6 +245,7 @@ layout = html.Div(children=[
 
                                           }
                         ),
+                        html.Figcaption("Table 1b", style={'fontStyle': 'italic', 'fontSize': '14px', 'textAlign': 'center'}),
                         html.Div(id='table_4b-container')
                     ], className='pg2-table-lgeo'
 
@@ -232,17 +255,10 @@ layout = html.Div(children=[
 
                 # Table 2
                 html.Div([
-                    # Title
-                    html.H3(children=html.Strong('Housing units and extreme core housing need, Table 2'),
-                            id='visualization3'),
-                    # Description
+
                     html.Div([
                         html.H6(
-                            'No text for now...')
-                    ], className='muni-reg-text-lgeo'),
-
-
-                    html.Div([
+                            'The following table shows the estimated total of owners with a mortgage and renter households in ECHN in 2021 (Steps 3 and 4).'),
                         dbc.Button("Export", id="export-table-3", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table5',
@@ -279,6 +295,7 @@ layout = html.Div(children=[
 
                                           }
                         ),
+                        html.Figcaption("Table 2", style={'fontStyle': 'italic', 'fontSize': '14px', 'textAlign': 'center'}),
                         html.Div(id='table8-container')
                     ], className='pg2-table-lgeo'
 
@@ -289,17 +306,19 @@ layout = html.Div(children=[
                 # Table 3
                 html.Div([
                     # Title
-                    html.H3(children=html.Strong('Housing units and homelessness, Table 3'),
+                    html.H3(children=html.Strong('Component B: Housing units and homelessness'),
                             id='visualization3'),
                     # Description
                     html.Div([
                         html.H6(
-                            'No text for now...')
+                            'The following table calculates the number of new homes required to meet the needs of the existing population of people experiencing homelessness (PEH), according to provincial guidelines. ')
                     ], className='muni-reg-text-lgeo'),
 
                     # Table
 
                     html.Div([
+                    html.H6(
+                            'The following table shows the estimated number of homes required to meet the need of existing PEH households as a proportion of the regional need (Steps 1-3).'),
                         dbc.Button("Export", id="export-table-4", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table_6',
@@ -344,6 +363,7 @@ layout = html.Div(children=[
 
                                           }
                         ),
+                        html.Figcaption("Table 3", style={'fontStyle': 'italic', 'fontSize': '14px', 'textAlign': 'center'}),
                         html.Div(id='table_6-container')
                     ], className='pg2-table-lgeo'
 
@@ -354,17 +374,19 @@ layout = html.Div(children=[
                 # Table 4a
                 html.Div([
                     # Title
-                    html.H3(children=html.Strong('Housing units and suppressed household formation, Table 4.a'),
+                    html.H3(children=html.Strong('Component C: Housing units and suppressed household formation'),
                             id='visualization3'),
                     # Description
                     html.Div([
                         html.H6(
-                            'No text for now...')
+                            'The following tables calculate the number of new homes required to meet the demand from households unable to form due to a constrained housing environment, since 2006, according to provincial guidelines.')
                     ], className='muni-reg-text-lgeo'),
 
                     # Table
 
                     html.Div([
+                    html.H6(
+                            'The following table shows the number of owner and renter households in 2006 by age of the primary household maintainer (Step 1).'),
                         dbc.Button("Export", id="export-table-5", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table7_2006',
@@ -407,6 +429,7 @@ layout = html.Div(children=[
 
                                           }
                         ),
+                        html.Figcaption("Table 4a", style={'fontStyle': 'italic', 'fontSize': '14px', 'textAlign': 'center'}),
                         html.Div(id='table7_2006-container')
                     ], className='pg2-table-lgeo'
 
@@ -415,19 +438,11 @@ layout = html.Div(children=[
                 ], className='pg2-table-plot-box-lgeo'),
 
                 # Table 4b
-                html.Div([
-                    # Title
-                    html.H3(children=html.Strong('Housing units and suppressed household formation, Table 4.b'),
-                            id='visualization3'),
-                    # Description
-                    html.Div([
-                        html.H6(
-                            'No text for now...')
-                    ], className='muni-reg-text-lgeo'),
-
                     # Table
-
+                html.Div([
                     html.Div([
+                    html.H6(
+                            "The following table shows the number of owner and renter households in 2021 by age of the primary household maintainer (Step 1, cont'd)."),
                         dbc.Button("Export", id="export-table-6", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table7_2021',
@@ -472,6 +487,8 @@ layout = html.Div(children=[
 
                                           }
                         ),
+                        html.Figcaption("Table 4b",
+                                        style={'fontStyle': 'italic', 'fontSize': '14px', 'textAlign': 'center'}),
                         html.Div(id='table7_2021-container')
                     ], className='pg2-table-lgeo'
 
@@ -481,17 +498,9 @@ layout = html.Div(children=[
 
                 # Table 5
                 html.Div([
-                    # Title
-                    html.H3(children=html.Strong('Housing units and suppressed household formation, Table 5'),
-                            id='visualization3'),
-                    # Description
-                    html.Div([
-                        html.H6(
-                            'No text for now...')
-                    ], className='muni-reg-text-lgeo'),
-
 
                     html.Div([
+                        html.H6('The following table shows the population by age category in 2006 and 2021 (Step 2).'),
                         dbc.Button("Export", id="export-table-7", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table8',
@@ -535,6 +544,8 @@ layout = html.Div(children=[
 
                                           }
                         ),
+                        html.Figcaption("Table 5",
+                                        style={'fontStyle': 'italic', 'fontSize': '14px', 'textAlign': 'center'}),
                         html.Div(id='table8-container')
                     ], className='pg2-table-lgeo'
 
@@ -544,17 +555,8 @@ layout = html.Div(children=[
 
                 # Table 6
                 html.Div([
-                    # Title
-                    html.H3(children=html.Strong('Housing units and suppressed household formation, Table 6'),
-                            id='visualization3'),
-                    # Description
                     html.Div([
-                        html.H6(
-                            'No text for now...')
-                    ], className='muni-reg-text-lgeo'),
-
-
-                    html.Div([
+                        html.H6('The following table shows the 2006 headship rate of each age category for both renters and owners (Step 3).'),
                         dbc.Button("Export", id="export-table-8", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table9',
@@ -598,6 +600,8 @@ layout = html.Div(children=[
 
                                           }
                         ),
+                        html.Figcaption("Table 6",
+                                        style={'fontStyle': 'italic', 'fontSize': '14px', 'textAlign': 'center'}),
                         html.Div(id='table9-container')
                     ], className='pg2-table-lgeo'
 
@@ -607,17 +611,8 @@ layout = html.Div(children=[
 
                 # Table 7
                 html.Div([
-                    # Title
-                    html.H3(children=html.Strong('Housing units and suppressed household formation, Table 7'),
-                            id='visualization3'),
-                    # Description
                     html.Div([
-                        html.H6(
-                            'No text for now...')
-                    ], className='muni-reg-text-lgeo'),
-
-
-                    html.Div([
+                        html.H6('The following table shows the potential 2021 headship rate of each age category for both renters and owners if the headship rate from 2006 remained constant (Step 4).'),
                         dbc.Button("Export", id="export-table-9", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table10',
@@ -661,6 +656,8 @@ layout = html.Div(children=[
 
                                           }
                         ),
+                        html.Figcaption("Table 7",
+                                        style={'fontStyle': 'italic', 'fontSize': '14px', 'textAlign': 'center'}),
                         html.Div(id='table10-container')
                     ], className='pg2-table-lgeo'
 
@@ -670,17 +667,9 @@ layout = html.Div(children=[
 
                 # Table 8
                 html.Div([
-                    # Title
-                    html.H3(children=html.Strong('Housing units and suppressed household formation, Table 8'),
-                            id='visualization3'),
-                    # Description
-                    html.Div([
-                        html.H6(
-                            'No text for now...')
-                    ], className='muni-reg-text-lgeo'),
-
 
                     html.Div([
+                        html.H6('The following table calculates the number of suppressed households by subtracting actual households in 2021 from potential households in 2021 by age category, according to provincial guidelines (Steps 5 and 6).'),
                         dbc.Button("Export", id="export-table-10", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table11',
@@ -724,6 +713,8 @@ layout = html.Div(children=[
 
                                           }
                         ),
+                        html.Figcaption("Table 8",
+                                        style={'fontStyle': 'italic', 'fontSize': '14px', 'textAlign': 'center'}),
                         html.Div(id='table11-container')
                     ], className='pg2-table-lgeo'
 
@@ -734,17 +725,18 @@ layout = html.Div(children=[
                 # Table 9
                 html.Div([
                     # Title
-                    html.H3(children=html.Strong('Housing units and anticipated household growth, Table 9'),
+                    html.H3(children=html.Strong('Component D: Housing units and anticipated household growth'),
                             id='visualization3'),
                     # Description
                     html.Div([
                         html.H6(
-                            'No text for now...')
+                            'The following tables calculates the number of new homes required to accommodate an increasing population over 20 years according to provincial guidelines.')
                     ], className='muni-reg-text-lgeo'),
 
                     # Table
 
                     html.Div([
+                        html.H6('The following table shows the 20-year population projection and growth rate for your regional district (Step 1).'),
                         dbc.Button("Export", id="export-table-11", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table_12',
@@ -780,6 +772,8 @@ layout = html.Div(children=[
 
                                           }
                         ),
+                        html.Figcaption("Table 9",
+                                        style={'fontStyle': 'italic', 'fontSize': '14px', 'textAlign': 'center'}),
                         html.Div(id='table_12-container')
                     ], className='pg2-table-lgeo'
 
@@ -789,17 +783,9 @@ layout = html.Div(children=[
 
                 # Table 10
                 html.Div([
-                    # Title
-                    html.H3(children=html.Strong('Housing units and anticipated household growth, Table 10'),
-                            id='visualization3'),
-                    # Description
-                    html.Div([
-                        html.H6(
-                            'No text for now...')
-                    ], className='muni-reg-text-lgeo'),
-
 
                     html.Div([
+                        html.H6('The following table shows the calculated number of new homes needed in the next 20 years according to the provincial guidelines, calculated with the average of the municipal and regional growth projections (Steps 2-5).'),
                         dbc.Button("Export", id="export-table-12", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table_13',
@@ -844,6 +830,8 @@ layout = html.Div(children=[
 
                                           }
                         ),
+                        html.Figcaption("Table 10",
+                                        style={'fontStyle': 'italic', 'fontSize': '14px', 'textAlign': 'center'}),
                         html.Div(id='table_13-container')
                     ], className='pg2-table-lgeo'
 
@@ -854,17 +842,18 @@ layout = html.Div(children=[
                 # Table 11
                 html.Div([
                     # Title
-                    html.H3(children=html.Strong(' Housing units and rental vacancy rate, Table 11'),
+                    html.H3(children=html.Strong('Component E: Housing units and rental vacancy rate'),
                             id='visualization3'),
                     # Description
                     html.Div([
                         html.H6(
-                            'No text for now...')
+                            'The following table calculates the number of new homes required to restore local vacancy rates to 3% according to provincial guidelines. Please note that in jurisdictions without vacancy rate data, the calculator will default to the provincial vacancy rate, following provincial guidance.')
                     ], className='muni-reg-text-lgeo'),
 
                     # Table
 
                     html.Div([
+                        html.H6('The following table shows the difference between the existing total number of rental homes and the total number of rental homes required for a 3% vacancy rate (Steps 1-4).'),
                         dbc.Button("Export", id="export-table-13", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table_14',
@@ -900,6 +889,8 @@ layout = html.Div(children=[
 
                                           }
                         ),
+                        html.Figcaption("Table 11",
+                                        style={'fontStyle': 'italic', 'fontSize': '14px', 'textAlign': 'center'}),
                         html.Div(id='table_14-container')
                     ], className='pg2-table-lgeo'
 
@@ -910,17 +901,18 @@ layout = html.Div(children=[
                 # Table 12
                 html.Div([
                     # Title
-                    html.H3(children=html.Strong(' Housing units and demand, Table 12'),
+                    html.H3(children=html.Strong('Component F: Housing units and demand (the “demand buffer”)'),
                             id='visualization3'),
                     # Description
                     html.Div([
                         html.H6(
-                            'No text for now...')
+                            'The demand factor is a multiplier used to calculate additional local housing demand (or "demand buffer"), determined by the province.')
                     ], className='muni-reg-text-lgeo'),
 
                     # Table
 
                     html.Div([
+                        html.H6('The following table calculates additional demand for new housing by applying your demand factor to the total of the other relevant components, according to provincial guidelines (Steps 1 and 2).'),
                         dbc.Button("Export", id="export-table-14", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table_15',
@@ -957,6 +949,8 @@ layout = html.Div(children=[
 
                                           }
                         ),
+                        html.Figcaption("Table 12",
+                                        style={'fontStyle': 'italic', 'fontSize': '14px', 'textAlign': 'center'}),
                         html.Div(id='table_15-container')
                     ], className='pg2-table-lgeo'
 
@@ -967,17 +961,12 @@ layout = html.Div(children=[
                 # Table 13
                 html.Div([
                     # Title
-                    html.H3(children=html.Strong(' Twenty-year and five-year housing need, Table 13'),
+                    html.H3(children=html.Strong('Total 5-year and 20-year housing need'),
                             id='visualization3'),
-                    # Description
-                    html.Div([
-                        html.H6(
-                            'No text for now...')
-                    ], className='muni-reg-text-lgeo'),
-
                     # Table
 
                     html.Div([
+                        html.H6('The following table sums Components A-F and rounds the totals to the nearest whole number to determine the total number of new homes needed in the next 20 years, according to provincial guidelines. It also displays 5-year housing need estimates using the multipliers provided in the provincial guidelines and BC Stats household projections from 2021 to 2026.'),
                         dbc.Button("Export", id="export-table-15", className="mb-3", color="primary"),
                         dash_table.DataTable(
                             id='table_16',
@@ -1013,6 +1002,8 @@ layout = html.Div(children=[
 
                                           }
                         ),
+                        html.Figcaption("Table 13",
+                                        style={'fontStyle': 'italic', 'fontSize': '14px', 'textAlign': 'center'}),
                         html.Div(id='table_16-container')
                     ], className='pg2-table-lgeo'
 
@@ -1033,18 +1024,6 @@ layout = html.Div(children=[
 ], className='background-lgeo'
 )
 
-tables = {
-    1: table4a_for_dash,
-    2: table4b_for_dash,
-    # Add other tables here
-}
-
-# Function to get table by ID
-def get_table_by_id():
-    return table4a_for_dash
-    # print(tables.get(table_id))
-    # # pdb.set_trace()
-    # return tables.get(table_id)
 
 def generate_style_data_conditional(data):
 
@@ -1162,18 +1141,18 @@ def number_formatting(df, col_list, precision):
             df[cols] = df[cols].apply(lambda x: '{0:,.0f}'.format(x) if pd.notnull(x) and x != 'n/a' else x)
     else:
         for cols in col_list:
-            df[cols] = df[cols].apply(lambda x: '{0:,.3f}'.format(x) if pd.notnull(x) and x != 'n/a' else x)
+            df[cols] = df[cols].apply(lambda x: '{0:,.2f}'.format(x) if pd.notnull(x) and x != 'n/a' else x)
     return df
 
 def percent_formatting(df, col_list, mult_flag):
     if mult_flag == 0:
         for cols in col_list:
             # df[cols] = df[cols].map('{:,.3f}%'.format)
-            df[cols] = df[cols].apply(lambda x: f"{x:.3f}%" if pd.notna(x) and x != 'n/a' else x)
+            df[cols] = df[cols].apply(lambda x: f"{x:.2f}%" if pd.notna(x) and x != 'n/a' else x)
             # df[cols] = df[cols].apply(lambda x: f"{x:.3%}" if pd.notnull(x) and x != 'n/a' else x)
     else:
         for cols in col_list:
-            df[cols] = df[cols].apply(lambda x: f"{x*100:.3%}" if pd.notnull(x) and x != 'n/a' else x)
+            df[cols] = df[cols].apply(lambda x: f"{x*100:.2%}" if pd.notnull(x) and x != 'n/a' else x)
     return df
 
 # Callback for storing selected areas and area scale level
@@ -1406,6 +1385,7 @@ def update_table_5(geo, geo_c, scale, selected_columns):
         table = number_formatting(table, ['2021 Households'], 0)
         table = number_formatting(table, ['Households in ECHN'], 3)
         # table['Households in ECHN'] = table['Households in ECHN'].apply(lambda x: '{0:,.3f}'.format(x) if pd.notnull(x) else x)
+        # table['Average ECHN Rate'] = table['Average ECHN Rate'].apply(lambda x: f"{x * 100:.2f}%" if pd.notna(x) and x != 'n/a' else x)
         table = percent_formatting(table, ['Average ECHN Rate'], 0)
 
         if not table.empty:
@@ -1490,7 +1470,7 @@ def update_table_6(geo, geo_c, scale, selected_columns):
         table = table_generator(geo, table_6, "table_6")
         # table[('Local Population', '% of region')] = table[('Local Population', '% of region')].apply(lambda x: f"{x*100:.3%}" if pd.notna(x) else x)
         # table = percent_formatting(table, [('Local Population', '% of region')], 0)
-        table[('Local Population', '% of region')] = table[('Local Population', '% of region')].apply(lambda x: f"{x*10:.3f}%" if pd.notna(x) and x != 'n/a' else x)
+        table[('Local Population', '% of region')] = table[('Local Population', '% of region')].apply(lambda x: f"{x*100:.2f}%" if pd.notna(x) and x != 'n/a' else x)
         table = number_formatting(table, [('Local Population', '#'), ('', 'Regional PEH')], 0)
         table = number_formatting(table, [('', 'Proportional Local PEH')], 3)
         # pdb.set_trace()
@@ -1916,9 +1896,9 @@ def update_table_9(geo, geo_c, scale, selected_columns):
 
         # table = percent_formatting(table, [('2006 Headship Rate', 'Owner'), ('2006 Headship Rate', 'Renter')], 0)
         table[('2006 Headship Rate', 'Owner')] = table[('2006 Headship Rate', 'Owner')].apply(
-            lambda x: f"{x * 100:.3f}%" if pd.notna(x) and x != 'n/a' else x)
+            lambda x: f"{x * 100:.2f}%" if pd.notna(x) and x != 'n/a' else x)
         table[('2006 Headship Rate', 'Renter')] = table[('2006 Headship Rate', 'Renter')].apply(
-            lambda x: f"{x * 100:.3f}%" if pd.notna(x) and x != 'n/a' else x)
+            lambda x: f"{x * 100:.2f}%" if pd.notna(x) and x != 'n/a' else x)
         # table[('2006 Headship Rate', 'Owner')] = (table[('2006 Headship Rate', 'Owner')] * 100).astype(str) + '%'
         # table[('2006 Headship Rate', 'Renter')] = (table[('2006 Headship Rate', 'Renter')] * 100).astype(str) + '%'
         style_data_conditional = generate_style_data_conditional(table)
@@ -2013,9 +1993,9 @@ def update_table_10(geo, geo_c, scale, selected_columns):
         table = number_formatting(table, [('2021 Potential Households', 'Owner'), ('2021 Potential Households', 'Renter')], 3)
 
         table[('2006 Headship Rate', 'Owner')] = table[('2006 Headship Rate', 'Owner')].apply(
-            lambda x: f"{x * 100:.3f}%" if pd.notna(x) and x != 'n/a' else x)
+            lambda x: f"{x * 100:.2f}%" if pd.notna(x) and x != 'n/a' else x)
         table[('2006 Headship Rate', 'Renter')] = table[('2006 Headship Rate', 'Renter')].apply(
-            lambda x: f"{x * 100:.3f}%" if pd.notna(x) and x != 'n/a' else x)
+            lambda x: f"{x * 100:.2f}%" if pd.notna(x) and x != 'n/a' else x)
 
         # table[('2006 Headship Rate', 'Owner')] = (table[('2006 Headship Rate', 'Owner')] * 100).astype(str) + '%'
         # table[('2006 Headship Rate', 'Renter')] = (table[('2006 Headship Rate', 'Renter')] * 100).astype(str) + '%'
@@ -2213,7 +2193,8 @@ def update_table_12(geo, geo_c, scale, selected_columns):
         # table = percent_formatting(table, ['Regional Growth Rate'], 0)
         # df[cols] = df[cols].apply(lambda x: f"{x:.3%}" if pd.notnull(x) else x)
         # print(table.dtypes)
-        table['Regional Growth Rate'] = table['Regional Growth Rate'].map('{:,.3f}%'.format)
+        # table['Regional Growth Rate'] = table['Regional Growth Rate'].map('{:,.2f}%'.format)
+        table['Regional Growth Rate'] = table['Regional Growth Rate'].apply(lambda x: f"{x:.2f}%" if pd.notna(x) and x != 'n/a' else x)
         style_data_conditional = generate_style_data_conditional(table)
         style_header_conditional = generate_style_header_conditional(table)
         # Generating callback output to update table
@@ -2293,7 +2274,7 @@ def update_table_13(geo, geo_c, scale, selected_columns):
         table = number_formatting(table, [('Households', '2021')], 0)
         table = number_formatting(table, [('Households', '2041'), ('New Units', '')], 3)
         # table['Regional Growth Rate'] = table['Regional Growth Rate'].map(lambda x: '{:,.3f}%'.format if pd.notna(x) else x)
-        table[('Regional Growth Rate', '')] = table[('Regional Growth Rate', '')].apply(lambda x: f"{x:.3f}%" if pd.notna(x) and x != 'n/a' else x)
+        table[('Regional Growth Rate', '')] = table[('Regional Growth Rate', '')].apply(lambda x: f"{x:.2f}%" if pd.notna(x) and x != 'n/a' else x)
         style_data_conditional = generate_style_data_conditional(table)
         style_header_conditional = generate_style_header_conditional(table)
 
@@ -2431,8 +2412,8 @@ def update_table_14(geo, geo_c, scale, selected_columns):
         # table = percent_formatting(table, ['Vacancy Rate', 'Occupied Rate'], 0)
         # table['Regional Growth Rate'] = table['Regional Growth Rate'].map(lambda x: '{:,.3f}%'.format if pd.notna(x) else x)
         # table['Regional Growth Rate'] = table['Regional Growth Rate'].apply(lambda x: f"{x:.3f}%" if pd.notna(x) else x)
-        table['Vacancy Rate'] = table['Vacancy Rate'].apply(lambda x: f"{x:.3f}%" if pd.notna(x) and x != 'n/a' else x)
-        table['Occupied Rate'] = table['Occupied Rate'].apply(lambda x: f"{x:.3f}%" if pd.notna(x) and x != 'n/a' else x)
+        table['Vacancy Rate'] = table['Vacancy Rate'].apply(lambda x: f"{x:.2f}%" if pd.notna(x) and x != 'n/a' else x)
+        table['Occupied Rate'] = table['Occupied Rate'].apply(lambda x: f"{x:.2f}%" if pd.notna(x) and x != 'n/a' else x)
         # table['Renter Households'] = table['Renter Households'].shift()
 
         # print(table)
@@ -2668,9 +2649,9 @@ def update_table_16(geo, geo_c, scale, selected_columns):
 
             for idx in table.index:
                 if idx != index_5yr:
-                    table.at[idx, '5 Year Need'] = '{:,.3f}'.format(float(table.at[idx, '5 Year Need']))
+                    table.at[idx, '5 Year Need'] = '{:,.2f}'.format(float(table.at[idx, '5 Year Need']))
                 if idx != index_20yr:
-                    table.at[idx, '20 Year Need'] = '{:,.3f}'.format(float(table.at[idx, '20 Year Need']))
+                    table.at[idx, '20 Year Need'] = '{:,.2f}'.format(float(table.at[idx, '20 Year Need']))
 
         # min_index = table['Component'].index[0]
         # print(min_index)

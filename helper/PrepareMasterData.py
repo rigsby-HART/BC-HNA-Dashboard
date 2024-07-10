@@ -7,10 +7,10 @@ from openpyxl import load_workbook
 # from openpyxl.worksheet.table import Table, TableStyleInfo
 filepath = '..\\Source\\New Source Files\\'
 
-source_filepath = filepath + 'BCData_LGeo_June_24_2024.xlsx'
+source_filepath = filepath + 'BCData_LGeo_June_28_2024.xlsx'
 demand_factor_filepath = filepath + 'Demand_Buffer_Clean_24_06_24.xlsx'
 # pdb.set_trace()
-output_filepath = os.path.join(os.getcwd(), 'inputs\\BCData_LGeo_June2024_Master_20240708.xlsx')
+output_filepath = os.path.join(os.getcwd(), 'inputs\\BCData_LGeo_June2024_Master_20240709.xlsx')
 
 census_2006_df = pd.read_excel(source_filepath, sheet_name='Census of Population_2006', header=[0, 1, 2])
 census_2011_df = pd.read_excel(source_filepath, sheet_name='Census of Population_2011', header=[0, 1, 2])
@@ -109,7 +109,7 @@ final_df.drop(columns=['Homelessness_Filled'], inplace=True)
 
 final_df.iloc[:, 326] = final_df.iloc[:, 326].replace('No data', 0).replace('X', 0)
 
-municipalities = ['Nanaimo', 'Powell River', 'Northern Rockies']
+municipalities = ['Nanaimo', 'Powell River', 'Northern Rockies', 'Central Okanagan']
 
 # Define the conditions and apply the replacement
 final_df[('', 'Municipality', '')] = final_df.apply(

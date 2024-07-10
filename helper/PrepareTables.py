@@ -937,6 +937,7 @@ class PrepareTables:
         loc = temp.copy()
         loc['Growth Scenarios'] = 'Local Household Growth'
         loc['Regional Growth Rate'] = "n/a"
+        loc['2041 CSD Household Projection'] = loc['2041 CSD Household Projection'].replace('No data', 0)
         loc['New Units'] = loc['2041 CSD Household Projection'] - loc['2021 CSD Household']
         loc = loc[
             ['GEOUID_CSD', 'Municipality', 'Growth Scenarios', 'Regional Growth Rate', '2021 CSD Household',
@@ -1058,6 +1059,8 @@ class PrepareTables:
         # Build regional rows
         reg = temp.copy()
         reg['Growth Scenarios'] = 'Regionally Based Household Growth'
+        # pdb.set_trace()
+        reg['2021 CSD Household Estimate'] = reg['2021 CSD Household Estimate'].replace('No data', 0)
         reg['New Units'] = (reg['Regional Growth Rate'] / 100) * reg['2021 CSD Household Estimate']
         reg['2026 Projection'] = reg['2021 CSD Household Estimate'] + reg['New Units']
         reg = reg[
@@ -1070,6 +1073,8 @@ class PrepareTables:
         loc = temp.copy()
         loc['Growth Scenarios'] = 'Local Household Growth'
         loc['Regional Growth Rate'] = "n/a"
+        loc['2021 CSD Household Estimate'] = loc['2021 CSD Household Estimate'].replace('No data', 0)
+        loc['2026 CSD Household Projection'] = loc['2026 CSD Household Projection'].replace('No data', 0)
         loc['New Units'] = loc['2026 CSD Household Projection'] - loc['2021 CSD Household Estimate']
         loc = loc[
             ['GEOUID_CSD', 'Municipality', 'Growth Scenarios', 'Regional Growth Rate', '2021 CSD Household Estimate',

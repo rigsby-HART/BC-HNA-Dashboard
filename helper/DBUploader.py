@@ -304,7 +304,7 @@ class DBUploader:
                         col == 'GEOID'):
                     vars()[col] = Column(String)
                 else:
-                    vars()[col] = Column(Integer)
+                    vars()[col] = Column(Float)
 
         self.Table_12 = Table_12  # Save the class to use later
 
