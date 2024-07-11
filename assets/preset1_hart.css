@@ -30,8 +30,18 @@
 .Select {
     z-index: 1002;
 }*/
+/* Footer
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
 
+.footer {
+    text-align: center;
+    padding: 10px 0;
+}
 
+.footer-image {
+    max-width: 100%;
+    height: auto;
+}
 /* Grid
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 .container {
@@ -530,7 +540,11 @@ span.column-header--sort {
 
 /* Fonts
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400&display=swap');
 
+.custom-font {
+    font-family: 'Open Sans', sans-serif;
+}
 /* @import url('https://fonts.cdnfonts.com/css/bahnschrift'); */
 
 @font-face{

@@ -239,7 +239,7 @@ class DBUploader:
 
             # Dynamically add columns based on the DataFrame columns
             for col in self.table_9_new.columns:
-                if (col == 'Municipality_') | (col == 'Age Categories – Household Maintainers_') | (col == 'GEOID_'):
+                if (col == 'Municipality_') | (col == '_Age Categories – Household Maintainers') | (col == 'GEOID_'):
                     vars()[col] = Column(String)
                 else:
                     vars()[col] = Column(Float)
@@ -260,7 +260,7 @@ class DBUploader:
 
             # Dynamically add columns based on the DataFrame columns
             for col in self.table_10_new.columns:
-                if (col == 'Municipality_') | (col == 'Age Categories – Household Maintainers_') | (col == 'GEOID_'):
+                if (col == 'Municipality_') | (col == '_Age Categories – Household Maintainers') | (col == 'GEOID_'):
                     vars()[col] = Column(String)
                 else:
                     vars()[col] = Column(Float)
@@ -281,7 +281,7 @@ class DBUploader:
 
             # Dynamically add columns based on the DataFrame columns
             for col in self.table_11_new.columns:
-                if (col == 'Municipality_') | (col == 'Age Categories – Household Maintainers_') | (col == 'GEOID_'):
+                if (col == 'Municipality_') | (col == '_Age Categories – Household Maintainers') | (col == 'GEOID_'):
                     vars()[col] = Column(String)
                 else:
                     vars()[col] = Column(Float)
@@ -326,7 +326,7 @@ class DBUploader:
                 if (col == 'Municipality_') | (col == 'Growth Scenarios_') | (
                         col == 'GEOID_'):
                     vars()[col] = Column(String)
-                elif col == 'New Units_':
+                elif (col == 'New Units_') | (col == 'Demand factor_'):
                     vars()[col] = Column(Float)
                 else:
                     vars()[col] = Column(Integer)
