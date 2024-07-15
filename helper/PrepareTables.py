@@ -1163,6 +1163,7 @@ class PrepareTables:
             new_col = tuple('' if 'Unnamed' in str(part) else part for part in col)
             new_columns.append('_'.join([str(part).strip() for part in new_col if part != '']))
         clean_input.columns = new_columns
+        clean_input = clean_input.replace('No ')
         # pdb.set_trace()
         # input_df.columns = input_df.columns.map('_'.join).str.strip('_')
         return clean_input

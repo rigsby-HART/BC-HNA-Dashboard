@@ -48,6 +48,7 @@
     }*/
 /* Footer
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
+/*
 @media print {
     .footer {
         position: fixed;
@@ -64,6 +65,7 @@
     margin: 0;
 }
 }
+*/
 /*
 .footer {
     text-align: left;

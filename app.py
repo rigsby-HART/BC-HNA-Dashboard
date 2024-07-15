@@ -46,78 +46,18 @@ def display_page(pathname):
         return "404 Page Error! Please choose a link"
 
 app.clientside_callback(
-     """
+      """
     function(n_clicks, geo){
         if (n_clicks > 0 && geo){
-        // Create a style element
-            var style = document.createElement('style');
-            style.type = 'text/css';
-            style.id = 'print-style';
-            style.innerHTML = `
-                @media print {
-                    .footer {
-                        position: fixed;
-                        bottom: 0;
-                        
-                        width: 90%;
-                        text-align: left;
-                        // padding-bottom: 100px;
-                        background-color: transparent;
-                        // page-break-inside: avoid;
-                        // page-break-after: always;
-                    
-                }}
-            `;
-            document.head.appendChild(style);
-            
-            // Calculate the position of the footer
-             var table = document.getElementById('table_16');
-             var footer = document.querySelector('.footer');
-             var originalFooterStyle = {
-                position: footer.style.position,
-                top: footer.style.top
-                };
-            if (table) {
-                var tableRect = table.getBoundingClientRect();
-                var footerTop = tableRect.bottom + 500; // 50px below the table
-                footer.style.position = 'absolute';
-                footer.style.top = footerTop + 'px';
-            }
-            
-            // Generate the PDF
             var opt = {
-                margin: [1,1,2,1], // Top, left, bottom, right margins
+                margin: 1,
                 filename: geo + '.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 3, useCORS: true},
+                html2canvas: { scale: 3},
                 jsPDF: { unit: 'cm', format: 'a2', orientation: 'p' },
                 pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
             };
-            html2pdf().from(document.getElementById("page-content-to-print")).set(opt).toPdf().get('pdf').then(function (pdf) {
-                // Calculate the number of pages
-                var totalPages = pdf.internal.getNumberOfPages();
-                console.log('Total Pages:', totalPages);
-
-                // Calculate the height of the footer
-                var footerHeight = footer.offsetHeight;
-                console.log('Footer Height:', footerHeight);
-                console.log(pdf.internal.pageSize.height)
-                console.log('Your Footer Content Here', 20, pdf.internal.pageSize.height + footerHeight + 100);
-
-                // Set the footer position to the bottom of the last page
-                pdf.setPage(totalPages);
-                pdf.text('Your Footer Content Here', 20, pdf.internal.pageSize.height + footerHeight + 100);
-
-                // Save the PDF
-                pdf.save(geo + '.pdf');
-                
-                // Remove the style element after generating the PDF
-                document.head.removeChild(style);
-                
-                // Restore the original footer style
-                footer.style.position = originalFooterStyle.position;
-                footer.style.top = originalFooterStyle.top;
-            });
+            html2pdf().from(document.getElementById("page-content-to-print")).set(opt).save();
         }
     }
     """,

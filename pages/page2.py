@@ -1510,14 +1510,17 @@ def update_table_6(geo, geo_c, scale, selected_columns):
         new_table = new_table.replace('Total New Units - 20 years', 'Total New Units to Homelessness Needs - 20 years')
 
         table_columns = [{"name": [geo, col1, col2], "id": f"{col1}_{col2}"} for col1, col2 in new_table.columns]
-        table_data = [
-            {
-                **{f"{x1}_{x2}": y for (x1, x2), y in data},
-            }
-            for (n, data) in [
-                *enumerate([list(x.items()) for x in new_table.T.to_dict().values()])
+        if geo == 'British Columbia (Province)':
+            table_data = []
+        else:
+            table_data = [
+                {
+                    **{f"{x1}_{x2}": y for (x1, x2), y in data},
+                }
+                for (n, data) in [
+                    *enumerate([list(x.items()) for x in new_table.T.to_dict().values()])
+                ]
             ]
-        ]
 
         style_data_conditional = generate_style_data_conditional(new_table)
         style_header_conditional = generate_style_header_conditional(new_table)
@@ -2226,6 +2229,12 @@ def update_table_12(geo, geo_c, scale, selected_columns):
         # pdb.set_trace()
         table_columns = [{"name": [geo, col], "id": col} for col in table.columns]
 
+
+        if geo == 'British Columbia (Province)':
+            table_data = pd.DataFrame()
+        else:
+            table_data = table.copy()
+
         style_cell_conditional = [
                                     {
                                         'if': {'column_id': table_columns[0]['id']},
@@ -2253,7 +2262,7 @@ def update_table_12(geo, geo_c, scale, selected_columns):
                                     } for i in table_columns[1:]
                                 ]
         # print(style_cell_conditional)
-        return table_columns, table.to_dict('records'), style_data_conditional, style_cell_conditional, style_header_conditional
+        return table_columns, table_data.to_dict('records'), style_data_conditional, style_cell_conditional, style_header_conditional
 
 
 @callback(
@@ -2323,15 +2332,17 @@ def update_table_13(geo, geo_c, scale, selected_columns):
 
         table_columns = [{"name": [geo, col1, col2], "id": f"{col1}_{col2}"} for col1, col2 in new_table.columns]
         # table_columns.append({'name': [geo]})
-
-        table_data = [
-            {
-                **{f"{x1}_{x2}": y for (x1, x2), y in data},
-            }
-            for (n, data) in [
-                *enumerate([list(x.items()) for x in new_table.T.to_dict().values()])
+        if geo == 'British Columbia (Province)':
+            table_data = []
+        else:
+            table_data = [
+                {
+                    **{f"{x1}_{x2}": y for (x1, x2), y in data},
+                }
+                for (n, data) in [
+                    *enumerate([list(x.items()) for x in new_table.T.to_dict().values()])
+                ]
             ]
-        ]
 
         style_cell_conditional = [
                                     {
@@ -2577,6 +2588,11 @@ def update_table_15(geo, geo_c, scale, selected_columns):
         # pdb.set_trace()
         table_columns = [{"name": [geo, col], "id": col} for col in new_table.columns]
 
+        if geo == 'British Columbia (Province)':
+            table_data = pd.DataFrame()
+        else:
+            table_data = new_table.copy()
+
         style_cell_conditional = [
                                     {
                                         'if': {'column_id': table_columns[0]['id']},
@@ -2635,7 +2651,7 @@ def update_table_15(geo, geo_c, scale, selected_columns):
             } for j in table_columns
         ]
         style_data_conditional.extend(add_total_style)
-        return table_columns, new_table.to_dict('records'), style_data_conditional, style_cell_conditional, style_header_conditional
+        return table_columns, table_data.to_dict('records'), style_data_conditional, style_cell_conditional, style_header_conditional
 
 
 @callback(
@@ -2715,6 +2731,11 @@ def update_table_16(geo, geo_c, scale, selected_columns):
         # pdb.set_trace()
         table_columns = [{"name": [geo, col], "id": col} for col in table.columns]
 
+        if geo == 'British Columbia (Province)':
+            table_data = pd.DataFrame()
+        else:
+            table_data = table.copy()
+
         style_cell_conditional = [
                                     {
                                         'if': {'column_id': table_columns[0]['id']},
@@ -2777,4 +2798,4 @@ def update_table_16(geo, geo_c, scale, selected_columns):
         new_data_style = generate_additional_data_style(table, table_columns)
         style_data_conditional.extend(new_data_style)
         style_data_conditional.extend(add_style_5_year)
-        return table_columns, table.to_dict('records'), style_data_conditional, style_cell_conditional, style_header_conditional
+        return table_columns, table_data.to_dict('records'), style_data_conditional, style_cell_conditional, style_header_conditional

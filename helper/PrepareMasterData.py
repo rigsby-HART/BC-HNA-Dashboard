@@ -5,19 +5,19 @@ import numpy as np
 from openpyxl import load_workbook
 # from openpyxl.utils.dataframe import dataframe_to_rows
 # from openpyxl.worksheet.table import Table, TableStyleInfo
-filepath = '..\\Source\\New Source Files\\'
+filepath = '..\\Source\\'
 
 source_filepath = filepath + 'BCData_LGeo_June_28_2024.xlsx'
 demand_factor_filepath = filepath + 'Demand_Buffer_Clean_24_06_24.xlsx'
 # pdb.set_trace()
-output_filepath = os.path.join(os.getcwd(), 'inputs\\BCData_LGeo_June2024_Master_20240709.xlsx')
+output_filepath = os.path.join(os.getcwd(), 'inputs\\BCData_LGeo_June2024_Master_20240715.xlsx')
 
 census_2006_df = pd.read_excel(source_filepath, sheet_name='Census of Population_2006', header=[0, 1, 2])
 census_2011_df = pd.read_excel(source_filepath, sheet_name='Census of Population_2011', header=[0, 1, 2])
 census_2016_df = pd.read_excel(source_filepath, sheet_name='Census of Population_2016', header=[0, 1, 2])
 census_2021_df = pd.read_excel(source_filepath, sheet_name='Census of Population_2021', header=[0, 1, 2])
 peh_df = pd.read_excel(source_filepath, sheet_name='PEH_2021_HB')
-projections_df = pd.read_excel(source_filepath, sheet_name='Projections_2021-2041')
+projections_df = pd.read_excel(source_filepath, sheet_name='Projections_2021-2041_July12')
 vacancy_df = pd.read_excel(source_filepath, sheet_name='VacancyRate_2021')
 demand_factor_df = pd.read_excel(demand_factor_filepath, sheet_name='DBuff')
 
@@ -107,7 +107,8 @@ final_df['Homelessness_Filled'] = final_df.groupby([('', 'CD_ID', '')])['Homeles
 final_df[homelessness_column] = final_df['Homelessness_Filled'].fillna(0)
 final_df.drop(columns=['Homelessness_Filled'], inplace=True)
 
-final_df.iloc[:, 326] = final_df.iloc[:, 326].replace('No data', 0).replace('X', 0)
+# final_df.iloc[:, 326] = final_df.iloc[:, 326].replace('No data', np.nan).replace('X', np.nan)
+final_df = final_df.replace('No data', np.nan).replace('X', np.nan).replace('x', np.nan)
 
 municipalities = ['Nanaimo', 'Powell River', 'Northern Rockies', 'Central Okanagan']
 
