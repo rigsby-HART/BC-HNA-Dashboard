@@ -48,16 +48,35 @@
     }*/
 /* Footer
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
-
+@media print {
+    .footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        height: 20%;
+        text-align: left;
+        background-color: transparent; /* Ensure it doesn't overlap with content */
+        padding-top: 120px; /* Add some padding if needed */
+    }
+}
+@media print {
+.pg2-table-plot-box-lgeo{
+    margin: 0;
+}
+}
+/*
 .footer {
-    text-align: center;
+    text-align: left;
     padding: 10px 0;
 }
 
+*/
 .footer-image {
     max-width: 100%;
     height: auto;
 }
+
+
 /* Grid
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 .container {

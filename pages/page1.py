@@ -35,16 +35,31 @@ engine_old = create_engine('sqlite:///sources//old_hart.db')
 # Importing Geo Code Information
 
 mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_old.connect())
+mapped_geo_code = mapped_geo_code[(mapped_geo_code['Geo_Code'].astype(str)).str.startswith('59')]
+# print('Mapped Geo code')
+# print(mapped_geo_code, mapped_geo_code.dtypes)
 df_geo_list = pd.read_sql_table('geocodes', engine_old.connect())
+df_geo_list = df_geo_list[(df_geo_list['Geo_Code'].astype(str)).str.startswith('59')]
+# print('geocodes')
+# print(df_geo_list, df_geo_list.dtypes)
 df_region_list = pd.read_sql_table('regioncodes', engine_old.connect())
+df_region_list = df_region_list[(df_region_list['Region_Code'].astype(str)).str.startswith('59')]
+# print('regioncodes')
+# print(df_region_list, df_region_list.dtypes)
 df_region_list.columns = df_geo_list.columns
 df_province_list = pd.read_sql_table('provincecodes', engine_old.connect())
+df_province_list = df_province_list[df_province_list['Province_Code'] == 59]
+# print('provincecodes')
+# print(df_province_list, df_province_list.dtypes)
 df_province_list.columns = df_geo_list.columns
 
 # Importing Province Map
 
 gdf_p_code_added = gpd.read_file('./sources/mapdata_simplified/province.shp')
+gdf_p_code_added = gdf_p_code_added[gdf_p_code_added['Geo_Code'] == 59]
+# gdf_p_code_added = gpd.read_file('./sources/mapdata_simplified/region_data/59.shp').rename(columns={'PRUID': 'Geo_Code'})
 gdf_p_code_added = gdf_p_code_added.set_index('Geo_Code')
+# gdf_p_code_added = gdf_p_code_added.replace('British Columbia / Colombie-Britannique', 'British Columbia')
 
 # Importing subregions which don't have data
 
@@ -88,6 +103,8 @@ order = order.sort_values(by=['Province_Code', 'Region_Code', 'Geo_Code'])
 
 gdf_p_code_added["rand"] = np.random.randint(1, 100, len(gdf_p_code_added))
 
+# print(gdf_p_code_added.index, gdf_p_code_added.geometry.centroid.y, gdf_p_code_added.geometry.centroid.x,
+#       gdf_p_code_added.geometry.centroid.y.mean(), gdf_p_code_added.geometry.centroid.x.mean())
 fig_m = go.Figure()
 
 fig_m.add_trace(go.Choroplethmapbox(geojson=json.loads(gdf_p_code_added.geometry.to_json()),
@@ -99,11 +116,11 @@ fig_m.add_trace(go.Choroplethmapbox(geojson=json.loads(gdf_p_code_added.geometry
                                     marker_line_width=.5))
 
 fig_m.update_layout(mapbox_style="carto-positron",
-                    mapbox_center={"lat": gdf_p_code_added.geometry.centroid.y.mean() + 10,
+                    mapbox_center={"lat": gdf_p_code_added.geometry.centroid.y.mean() + 20,
                                    "lon": gdf_p_code_added.geometry.centroid.x.mean()},
                     height=500,
                     width=1000,
-                    mapbox_zoom=1.4,
+                    mapbox_zoom=2.4,
                     autosize=True)
 
 # Setting layout for dashboard
@@ -142,8 +159,8 @@ layout = html.Div(children=[
                         html.Strong('Select Comparison Census Geography (Optional)'),
                         dcc.Dropdown(order['Geography'].unique(), id='comparison-geo-dropdown'),
                     ],
-                    className='dropdown-lgeo'
-                ),
+                    className='dropdown-lgeo', style={'display': 'none'}
+                )
             ],
                 className='dropdown-box-lgeo'
             ),
@@ -164,8 +181,8 @@ layout = html.Div(children=[
                 ], className='region-button-box-lgeo'
                 ),
                 html.Div(children=[
-                    html.Button('View Province / Territory',
-                                title="'Province' and 'territory' refer to the major political units of Canada. Canada is divided into 10 provinces and 3 territories.",
+                    html.Button('View Province',
+                                title="'Province' refer to the major political units of Canada. Showing British Columbia province.",
                                 id='to-province-1', n_clicks=0, className='region-button-lgeo'),
                 ], className='region-button-box-lgeo'
                 ),
@@ -231,8 +248,9 @@ def province_map(value, random_color):
     gdf_p_code_added['Geo_Code'] = gdf_p_code_added.index
 
     if random_color == True:
-        gdf_p_code_added["rand"] = [round(i / (len(gdf_p_code_added) - 1) * 100) for i in
-                                    range(0, len(gdf_p_code_added))]
+        # gdf_p_code_added["rand"] = [round(i / (len(gdf_p_code_added) - 1) * 100) for i in
+        #                             range(0, len(gdf_p_code_added))]
+        gdf_p_code_added["rand"] = 0
         map_colors = map_colors_wo_black
     else:
         gdf_p_code_added["rand"] = gdf_p_code_added['Geo_Code'].apply(lambda x: 0 if x == int(clicked_code) else 100)
@@ -250,9 +268,9 @@ def province_map(value, random_color):
                                         marker=dict(opacity=opacity_value),
                                         marker_line_width=.5))
     fig_m.update_layout(mapbox_style="carto-positron",
-                        mapbox_center={"lat": gdf_p_code_added['lat'].mean() + 10,
+                        mapbox_center={"lat": gdf_p_code_added['lat'].mean(),
                                        "lon": gdf_p_code_added['lon'].mean()},
-                        mapbox_zoom=2.0,
+                        mapbox_zoom=3.8,
                         margin=dict(b=0, t=10, l=0, r=10),
                         modebar_color=modebar_color, modebar_activecolor=modebar_activecolor,
                         autosize=True)
@@ -298,8 +316,8 @@ def region_map(value, random_color, clicked_code):
                                          marker_line_width=.5))
 
     fig_mr.update_layout(mapbox_style="carto-positron",
-                         mapbox_center={"lat": gdf_r_filtered['lat'].mean(), "lon": gdf_r_filtered['lon'].mean()},
-                         mapbox_zoom=3.0,
+                         mapbox_center={"lat": gdf_r_filtered['lat'].mean() + 3, "lon": gdf_r_filtered['lon'].mean()},
+                         mapbox_zoom=4.0,
                          margin=dict(b=0, t=10, l=0, r=10),
                          modebar_color=modebar_color, modebar_activecolor=modebar_activecolor,
                          autosize=True)

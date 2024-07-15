@@ -1149,6 +1149,7 @@ def table_generator(geo, df, table_id):
         if any('Total' in str(cell) or 'Average' in str(cell) for cell in row.values):
             continue
         else:
+            # table.loc[index] = row.apply(lambda x: 'n/a' if pd.isna(x) and not isinstance(x, (int, float)) else x)
             table.loc[index] = row.fillna('n/a')
 
     return table
@@ -2671,9 +2672,18 @@ def update_table_16(geo, geo_c, scale, selected_columns):
 
         # Generating table
         table = table_generator(geo, table_16, "table_16")
-        # print(table.dtypes)
-        table['5 Year Need'] = table['5 Year Need'].round(3)
-        table['20 Year Need'] = table['20 Year Need'].round(3)
+
+        try:
+            table['5 Year Need'] = table['5 Year Need'].round(3)
+            table['20 Year Need'] = table['20 Year Need'].round(3)
+        except TypeError:
+            table['5 Year Need'] = table['5 Year Need'].replace('n/a', np.nan).replace(',', '')
+            table['5 Year Need'] = pd.to_numeric(table['5 Year Need'], errors='coerce').round(3)
+            table['5 Year Need'] = table['5 Year Need'].fillna('n/a')
+
+            table['20 Year Need'] = table['20 Year Need'].replace('n/a', np.nan).replace(',', '')
+            table['20 Year Need'] = pd.to_numeric(table['20 Year Need'], errors='coerce').round(3)
+            table['20 Year Need'] = table['20 Year Need'].fillna('n/a')
         # table = number_formatting(table, ['5 Year Need', '20 Year Need'], 3)
         # print(table.dtypes)
 
@@ -2684,9 +2694,15 @@ def update_table_16(geo, geo_c, scale, selected_columns):
 
             for idx in table.index:
                 if idx != index_5yr:
-                    table.at[idx, '5 Year Need'] = '{:,.2f}'.format(float(table.at[idx, '5 Year Need']))
+                    try:
+                        table.at[idx, '5 Year Need'] = '{:,.2f}'.format(float(table.at[idx, '5 Year Need']))
+                    except ValueError:
+                        table.at[idx, '5 Year Need'] = 'n/a'
                 if idx != index_20yr:
-                    table.at[idx, '20 Year Need'] = '{:,.2f}'.format(float(table.at[idx, '20 Year Need']))
+                    try:
+                        table.at[idx, '20 Year Need'] = '{:,.2f}'.format(float(table.at[idx, '20 Year Need']))
+                    except ValueError:
+                        table.at[idx, '20 Year Need'] = 'n/a'
 
         # min_index = table['Component'].index[0]
         # print(min_index)

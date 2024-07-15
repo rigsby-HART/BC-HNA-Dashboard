@@ -34,13 +34,14 @@ def display_page(pathname):
     if pathname == '/page1':
         return page1.layout
     elif pathname == '/page2':
-        return html.Div([
-            page2.layout,
-            # Add the export table buttons here
-            html.Div(id='export-buttons', children=[
-                html.Button(id=f"export-table-{i}", n_clicks=0, style={'display': 'none'}) for i in range(1, 16)
-            ], style={'display': 'none'})
-        ])
+        return page2.layout
+        # return html.Div([
+        #     page2.layout,
+        #     # Add the export table buttons here
+        #     html.Div(id='export-buttons', children=[
+        #         html.Button(id=f"export-table-{i}", n_clicks=0, style={'display': 'none'}) for i in range(1, 16)
+        #     ], style={'display': 'none'})
+        # ])
     else:
         return "404 Page Error! Please choose a link"
 
@@ -48,15 +49,75 @@ app.clientside_callback(
      """
     function(n_clicks, geo){
         if (n_clicks > 0 && geo){
+        // Create a style element
+            var style = document.createElement('style');
+            style.type = 'text/css';
+            style.id = 'print-style';
+            style.innerHTML = `
+                @media print {
+                    .footer {
+                        position: fixed;
+                        bottom: 0;
+                        
+                        width: 90%;
+                        text-align: left;
+                        // padding-bottom: 100px;
+                        background-color: transparent;
+                        // page-break-inside: avoid;
+                        // page-break-after: always;
+                    
+                }}
+            `;
+            document.head.appendChild(style);
+            
+            // Calculate the position of the footer
+             var table = document.getElementById('table_16');
+             var footer = document.querySelector('.footer');
+             var originalFooterStyle = {
+                position: footer.style.position,
+                top: footer.style.top
+                };
+            if (table) {
+                var tableRect = table.getBoundingClientRect();
+                var footerTop = tableRect.bottom + 500; // 50px below the table
+                footer.style.position = 'absolute';
+                footer.style.top = footerTop + 'px';
+            }
+            
+            // Generate the PDF
             var opt = {
-                margin: 1,
+                margin: [1,1,2,1], // Top, left, bottom, right margins
                 filename: geo + '.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 3},
+                html2canvas: { scale: 3, useCORS: true},
                 jsPDF: { unit: 'cm', format: 'a2', orientation: 'p' },
-                pagebreak: { mode: ['avoid-all'] }
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
             };
-            html2pdf().from(document.getElementById("page-content-to-print")).set(opt).save();
+            html2pdf().from(document.getElementById("page-content-to-print")).set(opt).toPdf().get('pdf').then(function (pdf) {
+                // Calculate the number of pages
+                var totalPages = pdf.internal.getNumberOfPages();
+                console.log('Total Pages:', totalPages);
+
+                // Calculate the height of the footer
+                var footerHeight = footer.offsetHeight;
+                console.log('Footer Height:', footerHeight);
+                console.log(pdf.internal.pageSize.height)
+                console.log('Your Footer Content Here', 20, pdf.internal.pageSize.height + footerHeight + 100);
+
+                // Set the footer position to the bottom of the last page
+                pdf.setPage(totalPages);
+                pdf.text('Your Footer Content Here', 20, pdf.internal.pageSize.height + footerHeight + 100);
+
+                // Save the PDF
+                pdf.save(geo + '.pdf');
+                
+                // Remove the style element after generating the PDF
+                document.head.removeChild(style);
+                
+                // Restore the original footer style
+                footer.style.position = originalFooterStyle.position;
+                footer.style.top = originalFooterStyle.top;
+            });
         }
     }
     """,
@@ -100,8 +161,13 @@ def download_xlsx(*args):
 
     # print(ctx.triggered)
 
-    # if ctx.triggered[0]["value"] == 0:
-    #     return no_update
+    triggered_index = int(triggered_id.split("-")[-1])
+    n_clicks = args[triggered_index - 1]  # -1 because args is zero-indexed
+
+    # Check if the button was actually clicked
+    # print(args[:15])
+    if n_clicks is None:
+        return no_update
 
     geo = args[-3]
     geo_c = args[-2]
@@ -115,9 +181,31 @@ def download_xlsx(*args):
     column_names, data_table, _, _, _ = func(geo, geo_c, scale, None)
     filename = f"{geo}_{filename_template}.xlsx"
 
+    # Function to handle the conversion
+    def convert_value(val):
+        try:
+            if val == 'n/a':
+                return val
+            elif '%' in val:
+                return float(val.replace('%', '')) / 100
+            elif ',' in val and '.' in val:
+                return float(val.replace(',', ''))
+            elif ',' in val:
+                return int(val.replace(',', ''))
+            elif '.' in val:
+                return float(val)
+            else:
+                return val
+        except ValueError:
+            return val
+
+    table = pd.DataFrame(data_table)
+    for col in table.columns:
+        table[col] = table[col].apply(lambda x: convert_value(str(x)))
+
     output = BytesIO()
     with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-        pd.DataFrame(data_table).to_excel(writer, index=False)
+        table.to_excel(writer, index=False)
     output.seek(0)
     return dcc.send_bytes(output.read(), filename=filename)
 
