@@ -13,53 +13,31 @@ from sqlalchemy import create_engine
 # fiona.supported_drivers
 warnings.filterwarnings("ignore")
 current_dir = os.path.dirname(os.path.abspath(__file__))
-# db_path = os.path.join(current_dir, '..\\..\\Inputs\\new_hart.db')
-# pdb.set_trace()
+
 engine_new = create_engine('sqlite:///sources//new_hart.db')
 engine_old = create_engine('sqlite:///sources//old_hart.db')
-# # Importing income data
-#
-# df_income = pd.read_sql_table('income', engine.connect())
-#
-# # Importing partners data
-#
-# df_partners = pd.read_sql_table('partners', engine.connect())
-#
-# # Joining income and partners data
-#
-# income_category = df_income.drop(['Geography'], axis=1)
-# income_category = income_category.rename(columns={'Formatted Name': 'Geography'})
-# joined_df = income_category.merge(df_partners, how='left', on='Geography')
-
-# geo_info = pd.read_sql_table('id_table', engine_new.connect())
 # Importing Geo Code Information
 
 mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_old.connect())
 mapped_geo_code = mapped_geo_code[(mapped_geo_code['Geo_Code'].astype(str)).str.startswith('59')]
-# print('Mapped Geo code')
-# print(mapped_geo_code, mapped_geo_code.dtypes)
+
 df_geo_list = pd.read_sql_table('geocodes', engine_old.connect())
 df_geo_list = df_geo_list[(df_geo_list['Geo_Code'].astype(str)).str.startswith('59')]
-# print('geocodes')
-# print(df_geo_list, df_geo_list.dtypes)
+
 df_region_list = pd.read_sql_table('regioncodes', engine_old.connect())
 df_region_list = df_region_list[(df_region_list['Region_Code'].astype(str)).str.startswith('59')]
-# print('regioncodes')
-# print(df_region_list, df_region_list.dtypes)
+
 df_region_list.columns = df_geo_list.columns
 df_province_list = pd.read_sql_table('provincecodes', engine_old.connect())
 df_province_list = df_province_list[df_province_list['Province_Code'] == 59]
-# print('provincecodes')
-# print(df_province_list, df_province_list.dtypes)
+
 df_province_list.columns = df_geo_list.columns
 
 # Importing Province Map
 
 gdf_p_code_added = gpd.read_file('./sources/mapdata_simplified/province.shp')
 gdf_p_code_added = gdf_p_code_added[gdf_p_code_added['Geo_Code'] == 59]
-# gdf_p_code_added = gpd.read_file('./sources/mapdata_simplified/region_data/59.shp').rename(columns={'PRUID': 'Geo_Code'})
 gdf_p_code_added = gdf_p_code_added.set_index('Geo_Code')
-# gdf_p_code_added = gdf_p_code_added.replace('British Columbia / Colombie-Britannique', 'British Columbia')
 
 # Importing subregions which don't have data
 
@@ -103,8 +81,6 @@ order = order.sort_values(by=['Province_Code', 'Region_Code', 'Geo_Code'])
 
 gdf_p_code_added["rand"] = np.random.randint(1, 100, len(gdf_p_code_added))
 
-# print(gdf_p_code_added.index, gdf_p_code_added.geometry.centroid.y, gdf_p_code_added.geometry.centroid.x,
-#       gdf_p_code_added.geometry.centroid.y.mean(), gdf_p_code_added.geometry.centroid.x.mean())
 fig_m = go.Figure()
 
 fig_m.add_trace(go.Choroplethmapbox(geojson=json.loads(gdf_p_code_added.geometry.to_json()),
@@ -248,8 +224,6 @@ def province_map(value, random_color):
     gdf_p_code_added['Geo_Code'] = gdf_p_code_added.index
 
     if random_color == True:
-        # gdf_p_code_added["rand"] = [round(i / (len(gdf_p_code_added) - 1) * 100) for i in
-        #                             range(0, len(gdf_p_code_added))]
         gdf_p_code_added["rand"] = 0
         map_colors = map_colors_wo_black
     else:

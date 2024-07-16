@@ -1,16 +1,13 @@
-import pdb
 import os
 import pandas as pd
 import numpy as np
 from openpyxl import load_workbook
-# from openpyxl.utils.dataframe import dataframe_to_rows
-# from openpyxl.worksheet.table import Table, TableStyleInfo
-filepath = '..\\Source\\'
+filepath = '..\\..\\Source\\'
 
 source_filepath = filepath + 'BCData_LGeo_June_28_2024.xlsx'
 demand_factor_filepath = filepath + 'Demand_Buffer_Clean_24_06_24.xlsx'
 # pdb.set_trace()
-output_filepath = os.path.join(os.getcwd(), 'inputs\\BCData_LGeo_June2024_Master_20240715.xlsx')
+output_filepath = '..\\inputs\\BCData_LGeo_June2024_Master_20240715.xlsx'
 
 census_2006_df = pd.read_excel(source_filepath, sheet_name='Census of Population_2006', header=[0, 1, 2])
 census_2011_df = pd.read_excel(source_filepath, sheet_name='Census of Population_2011', header=[0, 1, 2])
@@ -49,12 +46,10 @@ demand_factor_df = to_multi_level_columns(demand_factor_df)
 
 
 merge_col = ('', 'GEOUID', '')
-# pdb.set_trace()
 merged_df = census_2006_df.merge(census_2011_df, how='left', on=[merge_col], suffixes=('', '_2011')) \
                         .merge(census_2016_df, how='left', on=[merge_col], suffixes=('', '_2016')) \
                         .merge(census_2021_df, how='left', on=[merge_col], suffixes=('', '_2021')) \
                         .merge(demand_factor_df, how='left', right_on=[('', 'GEO_ID', '')], left_on=[merge_col], suffixes=('', '_df'))
-# merged_df[('', 'CDID', '')] = pd.to_numeric(merged_df[merge_col].apply(lambda x: str(x)[:4] if len(str(x)) >= 4 else ""), errors='coerce')
 
 if len(merged_df) > len(census_2021_df):
     print("Double check the Geouids, the rows are duplicated...")
@@ -63,8 +58,7 @@ elif len(merged_df) < len(census_2021_df):
 else:
     print("The join was successfull...")
 
-# merged_df_peh = merged_df.merge(peh_df[['GeoUID', 'Number of People who Experienced Homelessness, 2021']],
-#                                 how='left', left_on=[('', 'CDID', '')], right_on=[('', 'GeoUID', '')])
+
 
 all_df = merged_df.merge(peh_df, how='left', left_on=[('', 'CD_ID', '')], right_on=[('', 'GeoUID', '')]).merge(
     projections_df, left_on=[merge_col], right_on=[('', 'GeoUID', '')]).merge(vacancy_df, left_on=[merge_col],
@@ -72,9 +66,7 @@ all_df = merged_df.merge(peh_df, how='left', left_on=[('', 'CD_ID', '')], right_
 all_df[('_x', 'Municipality', '_x')] = all_df[('_x', 'Municipality', '_x')].fillna(all_df[('', 'Geography Name', '')])
 all_df[('_x', 'Regional District', '_x')] = all_df[('_x', 'Regional District', '_x')].fillna(all_df[('', 'Geography Name', '')])
 all_df[('_x', 'CD_ID', '_x')] = all_df[('_x', 'CD_ID', '_x')].fillna(all_df[('', 'GEOUID', '')].astype(str).str[:4]).astype(int)
-# all_df.to_csv(r"L:\Projects\22005 - Housing Needs Assessment\Processed\HART_2024\Archive\test_df.csv")
 
-# pdb.set_trace()
 
 columns_to_remove = [('_x', 'GEOUID', '_x'), ('_x', 'NameTypeUID', '_x'), ('_x', 'Name', '_x'), ('_x', 'Type', '_x'),
                      ('_2021', 'NameTypeUID', '_2021'), ('_2021', 'Name', '_2021'), ('_2021', 'Type', '_2021'),
@@ -86,7 +78,6 @@ columns_to_remove = [('_x', 'GEOUID', '_x'), ('_x', 'NameTypeUID', '_x'), ('_x',
                      ('_y', 'Geography Type', '_y'), ('_y', 'GeoUID', '_y'),
                      ('', 'GeoUID', ''), ('', 'Geography Name', ''), ('', 'Geography Type', '')
                      ]
-# pdb.set_trace()
 
 def remove_suffixes(columns):
     new_columns = []
@@ -107,7 +98,6 @@ final_df['Homelessness_Filled'] = final_df.groupby([('', 'CD_ID', '')])['Homeles
 final_df[homelessness_column] = final_df['Homelessness_Filled'].fillna(0)
 final_df.drop(columns=['Homelessness_Filled'], inplace=True)
 
-# final_df.iloc[:, 326] = final_df.iloc[:, 326].replace('No data', np.nan).replace('X', np.nan)
 final_df = final_df.replace('No data', np.nan).replace('X', np.nan).replace('x', np.nan)
 
 municipalities = ['Nanaimo', 'Powell River', 'Northern Rockies', 'Central Okanagan']
@@ -120,6 +110,9 @@ final_df[('', 'Municipality', '')] = final_df.apply(
 # Arranging the dataframe in desired column sequence
 final_df = final_df.iloc[:, np.r_[0, 327, 329:331, 1:327, 328, 331:336]]
 
+# Remove British Columbia as requested
+final_df = final_df[~(final_df[('', 'Municipality', '')] == 'British Columbia')]
+
 final_df.to_excel(output_filepath)
 
 wb = load_workbook(output_filepath)
@@ -130,6 +123,7 @@ merged_cell_ranges = list(ws.merged_cells.ranges)
 
 for merged_cell_range in merged_cell_ranges:
     ws.unmerge_cells(str(merged_cell_range))
+
 # Adjust the headers to repeat level 0 headers
 # Adjust the headers to repeat level 0 headers
 new_columns = pd.MultiIndex.from_tuples([('', 'index', '')] + [tuple(col) for col in final_df.columns])
@@ -148,4 +142,4 @@ wb.save(output_filepath)
 
 
 id_file = demand_factor_df.drop(columns=[('', 'Demand Factor', '')], axis=1)
-id_file.to_excel(os.path.join(os.getcwd(), 'inputs\\Id_file.xlsx'))
+id_file.to_excel('..\\inputs\\Id_file.xlsx')

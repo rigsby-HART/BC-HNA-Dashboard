@@ -30,18 +30,10 @@ server = app.server
     Input('url', 'pathname')
 )
 def display_page(pathname):
-    # geo_value = "SampleGeoName"  # Default geo value for demonstration
     if pathname == '/page1':
         return page1.layout
     elif pathname == '/page2':
         return page2.layout
-        # return html.Div([
-        #     page2.layout,
-        #     # Add the export table buttons here
-        #     html.Div(id='export-buttons', children=[
-        #         html.Button(id=f"export-table-{i}", n_clicks=0, style={'display': 'none'}) for i in range(1, 16)
-        #     ], style={'display': 'none'})
-        # ])
     else:
         return "404 Page Error! Please choose a link"
 
@@ -99,13 +91,10 @@ def download_xlsx(*args):
     if not triggered_id.startswith("export-table"):
         return no_update
 
-    # print(ctx.triggered)
-
     triggered_index = int(triggered_id.split("-")[-1])
     n_clicks = args[triggered_index - 1]  # -1 because args is zero-indexed
 
     # Check if the button was actually clicked
-    # print(args[:15])
     if n_clicks is None:
         return no_update
 
