@@ -684,7 +684,6 @@ class PrepareTables:
                 , (2016, '#'), (2016, '% of total'), (2021, '#'), (2021, '% of total'), ('', 'Average ECHN Rate')]
             result_df = result_df[column_order]
 
-
         result_df = result_df.rename_axis(["GEOUID", "Municipality"])
         result_df = result_df.sort_values(by=['GEOUID', 'Municipality', ('', 'Extreme Core Housing Need')])
 
@@ -1002,7 +1001,7 @@ class PrepareTables:
         bc_vacancy_rate = 0.014
         # If local rate not available, use British Columbia rate
         filtered_df.loc[filtered_df[
-                            'Local primary rental market vacany rate'] == 'No data', 'Local primary rental market vacany rate'] = bc_vacancy_rate
+                            'Local primary rental market vacany rate'] == 0, 'Local primary rental market vacany rate'] = bc_vacancy_rate
         filtered_df['Local occupied rate'] = 1 - filtered_df['Local primary rental market vacany rate']
         filtered_df['Number of renter households in 2021'] = filtered_df['Number of renter households in 2021'].replace('x', np.nan).astype(float)
         # Create target rows

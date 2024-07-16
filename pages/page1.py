@@ -17,27 +17,29 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 engine_new = create_engine('sqlite:///sources//new_hart.db')
 engine_old = create_engine('sqlite:///sources//old_hart.db')
 # Importing Geo Code Information
+province_code = 59
 
 mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_old.connect())
-mapped_geo_code = mapped_geo_code[(mapped_geo_code['Geo_Code'].astype(str)).str.startswith('59')]
+mapped_geo_code = mapped_geo_code[(mapped_geo_code['Geo_Code'].astype(str)).str.startswith(str(province_code))]
 
 df_geo_list = pd.read_sql_table('geocodes', engine_old.connect())
-df_geo_list = df_geo_list[(df_geo_list['Geo_Code'].astype(str)).str.startswith('59')]
+df_geo_list = df_geo_list[(df_geo_list['Geo_Code'].astype(str)).str.startswith(str(province_code))]
 
 df_region_list = pd.read_sql_table('regioncodes', engine_old.connect())
-df_region_list = df_region_list[(df_region_list['Region_Code'].astype(str)).str.startswith('59')]
+df_region_list = df_region_list[(df_region_list['Region_Code'].astype(str)).str.startswith(str(province_code))]
 
 df_region_list.columns = df_geo_list.columns
 df_province_list = pd.read_sql_table('provincecodes', engine_old.connect())
-df_province_list = df_province_list[df_province_list['Province_Code'] == 59]
+df_province_list = df_province_list[df_province_list['Province_Code'] == province_code]
 
 df_province_list.columns = df_geo_list.columns
 
 # Importing Province Map
 
 gdf_p_code_added = gpd.read_file('./sources/mapdata_simplified/province.shp')
-gdf_p_code_added = gdf_p_code_added[gdf_p_code_added['Geo_Code'] == 59]
+gdf_p_code_added = gdf_p_code_added[gdf_p_code_added['Geo_Code'] == province_code]
 gdf_p_code_added = gdf_p_code_added.set_index('Geo_Code')
+gdf_p_code_added["rand"] = np.random.randint(1, 100, len(gdf_p_code_added))
 
 # Importing subregions which don't have data
 
@@ -79,26 +81,48 @@ order = order.sort_values(by=['Province_Code', 'Region_Code', 'Geo_Code'])
 
 # Setting a default map which renders before the dashboard is fully loaded
 
-gdf_p_code_added["rand"] = np.random.randint(1, 100, len(gdf_p_code_added))
+gdf_r_filtered = gpd.read_file(f'./sources/mapdata_simplified/region_data/{province_code}.shp',
+                                       encoding='UTF-8')
+
+gdf_r_filtered["rand"] = [i for i in range(0, len(gdf_r_filtered))]
+
+
+gdf_r_filtered = gdf_r_filtered.set_index('CDUID')
 
 fig_m = go.Figure()
 
-fig_m.add_trace(go.Choroplethmapbox(geojson=json.loads(gdf_p_code_added.geometry.to_json()),
-                                    locations=gdf_p_code_added.index,
-                                    z=gdf_p_code_added.rand,
-                                    showscale=False,
-                                    hovertext=gdf_p_code_added.NAME,
-                                    marker=dict(opacity=opacity_value),
-                                    marker_line_width=.5))
+
+# fig_m.add_trace(go.Choroplethmapbox(geojson=json.loads(gdf_p_code_added.geometry.to_json()),
+#                                     locations=gdf_p_code_added.index,
+#                                     z=gdf_p_code_added.rand,
+#                                     showscale=False,
+#                                     hovertext=gdf_p_code_added.NAME,
+#                                     marker=dict(opacity=opacity_value),
+#                                     marker_line_width=.5))
+#
+# fig_m.update_layout(mapbox_style="carto-positron",
+#                     mapbox_center={"lat": gdf_p_code_added.geometry.centroid.y.mean() + 20,
+#                                    "lon": gdf_p_code_added.geometry.centroid.x.mean()},
+#                     height=500,
+#                     width=1000,
+#                     mapbox_zoom=2.4,
+#                     autosize=True)
+fig_m.add_trace(go.Choroplethmapbox(geojson=json.loads(gdf_r_filtered.geometry.to_json()),
+                                         locations=gdf_r_filtered.index,
+                                         z=gdf_r_filtered.rand,
+                                         showscale=False,
+                                         colorscale=map_colors_wo_black,
+                                         text=gdf_r_filtered.CDNAME,
+                                         hovertemplate='%{text} - %{location}<extra></extra>',
+                                         marker=dict(opacity=opacity_value),
+                                         marker_line_width=.5))
 
 fig_m.update_layout(mapbox_style="carto-positron",
-                    mapbox_center={"lat": gdf_p_code_added.geometry.centroid.y.mean() + 20,
-                                   "lon": gdf_p_code_added.geometry.centroid.x.mean()},
-                    height=500,
-                    width=1000,
-                    mapbox_zoom=2.4,
-                    autosize=True)
-
+                         mapbox_center={"lat": gdf_r_filtered['lat'].mean() + 3, "lon": gdf_r_filtered['lon'].mean()},
+                         mapbox_zoom=4.0,
+                         margin=dict(b=0, t=10, l=0, r=10),
+                         modebar_color=modebar_color, modebar_activecolor=modebar_activecolor,
+                         autosize=True)
 # Setting layout for dashboard
 
 
@@ -399,8 +423,8 @@ def update_map(clickData, btn1, value, btn2, btn3, btn4, btn5):
         # -> Show map for Province
 
         if len(clicked_code) == 2:
-            fig_m = province_map(value, False)
-
+            # fig_m = province_map(value, False)
+            fig_m = region_map(value, False, 'N')
             return fig_m, value
 
         # When users select Census Division on dropbox menu
@@ -430,8 +454,8 @@ def update_map(clickData, btn1, value, btn2, btn3, btn4, btn5):
 
         elif len(clicked_code) == 2:
 
-            fig_m = province_map(value, False)
-
+            # fig_m = province_map(value, False)
+            fig_m = region_map(value, False, 'N')
             return fig_m, value
 
         # When users select Census SubDivision on dropbox menu
@@ -447,7 +471,8 @@ def update_map(clickData, btn1, value, btn2, btn3, btn4, btn5):
     # When Reset-Map button is clicked
 
     if "reset-map" == ctx.triggered_id:
-        fig_m = province_map(value, True)
+        # fig_m = province_map(value, True)
+        fig_m = region_map(value, True, str(province_code))
 
         return fig_m, default_value
 
@@ -491,7 +516,8 @@ def update_map(clickData, btn1, value, btn2, btn3, btn4, btn5):
 
     else:
 
-        fig_m = province_map(value, True)
+        # fig_m = province_map(value, True)
+        fig_m = region_map(value, True, str(province_code))
 
         return fig_m, default_value
 
