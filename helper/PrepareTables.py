@@ -6,7 +6,7 @@ import warnings
 warnings.filterwarnings('ignore')
 import numpy as np
 
-# filepath = '..\\throughputs\\'
+
 throughputs_path = '..\\throughputs\\'
 class PrepareTables:
     def __init__(self, master_csd_filepath, master_cd_filepath, formulas_filepath):
@@ -26,25 +26,9 @@ class PrepareTables:
         filtered_formulas_df = self.formulas_data[self.formulas_data['Table'] == 4]
         output_columns = filtered_formulas_df['Output'].tolist()
 
-        # # List of columns for the table which should have been calculated based on the formula spreadsheet
-        # output_columns_t4a = ['Total Households Owner, 2006', 'Total Households Renter, 2006',
-        #                       'Total Households Owner, 2011', 'Total Households Renter, 2011',
-        #                       'Total Households Owner, 2016', 'Total Households Renter, 2016',
-        #                       'Total Households Owner, 2021', 'Total Households Renter, 2021']
-
         # Pull id fields and calculated fields as above
         required_data_t4a = self.master_with_formula[
             ['GEOUID', 'Municipality', 'Regional District', 'CD_ID'] + output_columns[:8]]
-
-        # # List of columns for the table which should have been calculated based on the formula spreadsheet
-        # output_columns_t4b = ['Percent of owners with a mortgage in ECHN, 2021',
-        #                       'Number of units needed for owners with a mortgage, 2021',
-        #                       'Renters in ECHN, 2021', 'Renters in ECHN, 2006',
-        #                       'Renters in ECHN, 2011', 'Renters in ECHN, 2016',
-        #                       'Renters % of total in ECHN, 2021',
-        #                       'Renters % of total in ECHN, 2006',
-        #                       'Renters % of total in ECHN, 2011',
-        #                       'Renters % of total in ECHN, 2016']
 
         # Pull id fields and calculated fields as above
         required_data_t4b = self.master_with_formula[
@@ -58,7 +42,7 @@ class PrepareTables:
         path_to_save = os.path.join(throughputs_path, "Section A")
         if not os.path.exists(path_to_save):
             os.makedirs(path_to_save)
-        # pdb.set_trace()
+
         table_4a.to_excel(os.path.join(path_to_save, "Table4a.xlsx"))
         table_4b.to_excel(os.path.join(path_to_save, "Table4b.xlsx"))
         print("Table 4 Successfully created...")
@@ -74,7 +58,6 @@ class PrepareTables:
 
         # Pull id fields and calculated fields as above
         required_data = self.master_with_formula[['GEOUID', 'Municipality', 'Regional District', 'CD_ID'] + output_columns]
-        # _, table_4b = self.prepare_table_4()
 
         table_5 = self.clean_table_5_data(required_data, table_4b)
 
@@ -95,16 +78,14 @@ class PrepareTables:
 
         # List of columns to calculate which should have been calculated based on the formula spreadsheet
         output_columns = filtered_formulas_df['Output'].tolist()
-        # pdb.set_trace()
+
         # Pull id fields and calculated fields as above
         required_data = self.master_with_formula[['GEOUID', 'Municipality', 'Regional District', 'CD_ID'] + [output_columns[0]]]
 
         # Set the x's to 0's - this should happen in the apply_formula shouldn't it?
-        # required_data.loc[required_data['Local Population, 2021'] == 'x', 'Local Population, 2021'] = 0
 
         # FOR CD DATA - Use the formula script lookup file to index the data we want from the CD file since the columns are the same
         required_csd_columns = filtered_formulas_df['Numerator'].tolist()
-        # csd_columns = [244, 326]  # Population 2021 and PEH
 
         cd_columns = [c + 3 for c in required_csd_columns]
 
@@ -138,22 +119,17 @@ class PrepareTables:
         # Apply the formula to each row
         filtered_formulas_df = self.formulas_data[self.formulas_data['Table'] == 7]
         output_columns = filtered_formulas_df['Output'].tolist()
-        # pdb.set_trace()
-        required_data = self.master_with_formula[['GEOUID', 'Municipality', 'Regional District', 'CD_ID'] + output_columns]
 
-        # TODO - change this to keep it dynamic
-        # filtered_df = required_data[required_data['GEOUID'] == geoid_filter]
+        required_data = self.master_with_formula[['GEOUID', 'Municipality', 'Regional District', 'CD_ID'] + output_columns]
 
         # Process columns for each combination of year and category
         df_owner_2006 = self.clean_table_7_data(required_data, 2006, 'Owner').reset_index()
         df_owner_2021 = self.clean_table_7_data(required_data, 2021, 'Owner').reset_index()
         df_renter_2006 = self.clean_table_7_data(required_data, 2006, 'Renter').reset_index()
         df_renter_2021 = self.clean_table_7_data(required_data, 2021, 'Renter').reset_index()
-        # pdb.set_trace()
 
         df_2006 = df_owner_2006.merge(df_renter_2006)
         df_2021 = df_owner_2021.merge(df_renter_2021)
-        # pdb.set_trace()
 
         path_to_save = os.path.join(throughputs_path, "Section C")
         if not os.path.exists(path_to_save):
@@ -161,7 +137,6 @@ class PrepareTables:
 
         df_2006.to_excel(os.path.join(path_to_save, "Table7_2006.xlsx"))
         df_2021.to_excel(os.path.join(path_to_save, "Table7_2021.xlsx"))
-        # pdb.set_trace()
         print("Table 7 Successfully created...")
 
         return df_2006, df_2021
@@ -170,31 +145,26 @@ class PrepareTables:
         print("Preparing Table 8...")
         filtered_formulas_df = self.formulas_data[self.formulas_data['Table'] == 8]
         output_columns = filtered_formulas_df['Output'].tolist()
-        # pdb.set_trace()
+
         required_data = self.master_with_formula[['GEOUID', 'Municipality', 'Regional District', 'CD_ID'] + output_columns]
-        # TODO - change this to keep it dynamic
-        # filtered_df = required_data[required_data['GEOUID'] == geoid_filter]
-        # pdb.set_trace()
 
         df_2006 = self.clean_table_8_data(required_data, 2006).reset_index()
         df_2021 = self.clean_table_8_data(required_data, 2021).reset_index()
-        # pdb.set_trace()
 
         table_8 = df_2006.merge(df_2021, on=[('GEOUID', ''), ('Municipality', ''),
                                              (' ', 'Age Categories – Household Maintainers'),
                                                       (' ', 'Age Categories – Population')])
-        # pdb.set_trace()
+
         table_8 = table_8[[('GEOUID', ''), ('Municipality', ''), (' ', 'Age Categories – Household Maintainers'),
                            (' ', 'Age Categories – Population'), ('2006', 'All Categories'),
                            ('2006', 'Summed Categories'), ('2021', 'All Categories'), ('2021', 'Summed Categories')]]
-        # table_8.columns = table_8.columns[:2] + [(' ', 'Age Categories – Household Maintainers'),
-        #                                          (' ', 'Age Categories – Population')] + table_8.columns[4:]
+
         path_to_save = os.path.join(throughputs_path, "Section C")
         if not os.path.exists(path_to_save):
             os.makedirs(path_to_save)
 
         table_8.to_excel(os.path.join(path_to_save, "Table8.xlsx"))
-        # pdb.set_trace()
+
         print("Table 8 Successfully created...")
         return table_8
 
@@ -202,18 +172,16 @@ class PrepareTables:
         print("Preparing Table 9 and 10...")
         filtered_formulas_df = self.formulas_data[self.formulas_data['Table'] == 9]
         output_columns = filtered_formulas_df['Output'].tolist()
-        # pdb.set_trace()
+
         required_data = self.master_with_formula[
             ['GEOUID', 'Municipality', 'Regional District', 'CD_ID'] + output_columns]
-        # TODO - change this to keep it dynamic
-        # filtered_df = required_data[required_data['GEOUID'] == geoid_filter]
+
 
         updated_table_7_2006 = table7_2006.replace('Under 25 years', '15 to 24 years')
 
         headship_rate_2006_owner = self.clean_table_9_data(required_data, 2006, 'Owner')
         headship_rate_2006_renter = self.clean_table_9_data(required_data, 2006, 'Renter')
         headship_rate_2006 = headship_rate_2006_owner.join(headship_rate_2006_renter).reset_index()
-        # pdb.set_trace()
 
         table_9 = updated_table_7_2006.merge(table8.reset_index()[[('GEOUID', ''), ('Municipality', ''),
             (' ', 'Age Categories – Household Maintainers'), ('2006', 'Summed Categories')]],
@@ -222,11 +190,10 @@ class PrepareTables:
             headship_rate_2006, left_on=[(' ', 'Age Categories – Household Maintainers'), ('Municipality', ''), ('GEOUID', '')],
             right_on=[('Age Categories – Household Maintainers', ''), ('Municipality', ''), ('GEOUID', '')]
         )
-        # pdb.set_trace()
-        # table_9 = table_9.dropna(subset=[('2006', 'Summed Categories')])
+
         table_9.columns = pd.MultiIndex.from_tuples([('2006 Population', 'Total') if col == ('2006', 'Summed Categories') else col for col in table_9.columns])
 
-        # pdb.set_trace()
+
         table_9 = table_9[[('GEOUID', ''), ('Municipality', ''), (' ', 'Age Categories – Household Maintainers'),
                            ('2006 Households', 'Owner'), ('2006 Households', 'Renter'),
                            ('2006 Population', 'Total'),
@@ -247,19 +214,19 @@ class PrepareTables:
             ('2021', 'Summed Categories')]
         table_10[('2021 Potential Households', 'Renter')] = table_10[('2006 Headship Rate Float', 'Renter')] * table_10[
             ('2021', 'Summed Categories')]
-        # table_10 = table_10.dropna(subset=[('2021', 'Summed Categories')])
+
         table_10.columns = pd.MultiIndex.from_tuples(
             [('2021 Population', 'Total') if col == ('2021', 'Summed Categories') else col for col in table_10.columns])
         table_10.drop([('2006 Headship Rate Float', 'Owner'), ('2006 Headship Rate Float', 'Renter')], axis=1, inplace=True)
         table_10.drop_duplicates(keep='first', inplace=True)
-        # pdb.set_trace()
+
         path_to_save = os.path.join(throughputs_path, "Section C")
         if not os.path.exists(path_to_save):
             os.makedirs(path_to_save)
 
         table_9.to_excel(os.path.join(path_to_save, "Table9.xlsx"))
         table_10.to_excel(os.path.join(path_to_save, "Table10.xlsx"))
-        # pdb.set_trace()
+
         print("Table 9 and 10 Successfully created...")
 
         return table_9, table_10
@@ -267,7 +234,7 @@ class PrepareTables:
     def prepare_table_11(self, table_7_2021, table_10):
         print("Preparing Table 11...")
         updated_table_7_2021 = table_7_2021.groupby([('GEOUID', ''), ('Municipality', '')]).apply(self.clean_table_11_data).reset_index(drop=True)
-        # pdb.set_trace()
+
 
         # To check if 2 rows are removed (75 to 84 years, 85 years and over) and one row is added (75 years or more)
         assert len(updated_table_7_2021) == len(table_7_2021) - table_7_2021[('Municipality', '')].nunique(), "Age merging failed"
@@ -280,8 +247,6 @@ class PrepareTables:
             columns=('Age Categories – Household Maintainers', ''), axis=1
         )
 
-        # table_11.drop([(' ', 'Age Categories – Household Maintainers')], axis=1, inplace=True)
-        # pdb.set_trace()
         assert len(table_11) == len(required_table_10), 'Table 11 and Table 10 merge failed'
 
         table_11[('2021 Suppressed Households', 'Owner')] = table_11[('2021 Potential Households', 'Owner')] - \
@@ -299,7 +264,7 @@ class PrepareTables:
 
         # Initialize an empty list to hold the sum rows
         sum_rows = []
-        # pdb.set_trace()
+
         # Loop through each group to calculate the sum and create the sum row
         for group_id, group in grouped:
             total_sum = group[('2021 Suppressed Households', 'Total')].sum()
@@ -318,14 +283,11 @@ class PrepareTables:
         # Concatenate the sum rows with the original DataFrame
         sum_rows_df = pd.concat(sum_rows, ignore_index=True)
         table_11 = pd.concat([table_11, sum_rows_df], ignore_index=True)
-        # pdb.set_trace()
-
 
         path_to_save = os.path.join(throughputs_path, "Section C")
         if not os.path.exists(path_to_save):
             os.makedirs(path_to_save)
 
-        # pdb.set_trace()
         table_11.to_excel(os.path.join(path_to_save, "Table11.xlsx"))
         print("Table 11 Successfully created...")
         return table_11
@@ -348,7 +310,6 @@ class PrepareTables:
             ['GEOUID', 'Municipality', 'Regional District', 'CD_ID'] + output_columns_13]
 
         # FOR CD DATA - Use the formula script lookup file to index the data we want from the CD file since the columns are the same
-        # csd_columns = [327, 329]  # Households 2021 and Households 2041
         required_csd_columns = filtered_formulas_df_13['Numerator'].tolist()
         # Excluding demand factor column
         cd_columns = [c + 3 for c in required_csd_columns[:-1]]
@@ -358,14 +319,12 @@ class PrepareTables:
         req_columns = id_columns + cd_columns
 
         required_data_cd = self.clean_master_cd_data.iloc[:, req_columns]
-        # pdb.set_trace()
         required_data_cd.columns = ['GEOUID', 'Name', '2021', '2041']  # rename
         required_data_cd['Regional District Projections'] = 'Households'
         required_data_cd['Regional Growth Rate'] = ((required_data_cd['2041'] / required_data_cd['2021']) - 1) * 100
 
         table_12 = self.clean_table_12_data(required_data_12, required_data_cd)
         table_13 = self.clean_table_13_data(required_data_13, required_data_cd)
-        # pdb.set_trace()
         table_13.columns = pd.MultiIndex.from_tuples(
             [("GEOUID", ""), ("Municipality", ""), ("Growth Scenarios", ""),
              ("Regional Growth Rate", ""), ("Households", "2021"), ("Households", "2041"), ("New Units", ""), ("Demand factor", "")])
@@ -427,7 +386,6 @@ class PrepareTables:
         b_table6_units['Component'] = 'B. Persons Experiencing Homelessness'
         b_table6_units['order'] = 1
 
-        # pdb.set_trace()
         c_table11_units = table_11.loc[table_11[(' ', 'Age Categories – Household Maintainers')] == 'Total New Units – 20 Years'][
             [('GEOUID', ''), ('Municipality', ''), ('2021 Suppressed Households', 'Total')]]
         c_table11_units.columns = ['GEOUID', 'Municipality', 'Result']
@@ -441,10 +399,7 @@ class PrepareTables:
         e_table14_units['order'] = 3
 
         all_units = a_table5_units.append(b_table6_units).append(c_table11_units).append(e_table14_units)
-        # all_units.replace('X', np.nan, inplace=True)
-        #
-        # # Convert all columns to numeric
-        # all_units['Result'] = all_units['Result'].apply(pd.to_numeric, errors='coerce')
+
         total = all_units.groupby(['GEOUID', 'Municipality'])[['Result']].sum()
         total['Component'] = 'Total'
         total['order'] = 4
@@ -454,7 +409,7 @@ class PrepareTables:
         demand.rename(columns={'Demand factor': 'Result'}, inplace=True)
         demand['order'] = 5
 
-        # pdb.set_trace()
+
         final = demand.copy()
         final.set_index(['GEOUID', 'Municipality'], inplace=True)
         final = final.join(total, lsuffix='_demand', rsuffix="_total")
@@ -496,14 +451,12 @@ class PrepareTables:
         required_data = self.master_with_formula[['GEOUID', 'Municipality', 'Regional District', 'CD_ID'] + output_columns]
 
         # FOR CD DATA - Use the formula script lookup file to index the data we want from the CD file since the columns are the same
-        # csd_columns = [327, 328]  # Households 2021 and Households 2026
         required_csd_columns = filtered_formulas_df['Numerator'].tolist()
         cd_columns = [c + 3 for c in required_csd_columns]
 
         # GEOUID, Name
         id_columns = [0, 1]
         req_columns = id_columns + cd_columns
-        # pdb.set_trace()
 
         required_data_cd = self.clean_master_cd_data.iloc[:, req_columns]
         required_data_cd.columns = ['GEOUID', 'Name', '2021', '2026']  # rename
@@ -518,14 +471,11 @@ class PrepareTables:
         a_table5_units = table_5.loc[table_5['Total Households'] == 'Total New Units - 20 years'][
             ['GEOUID', 'Municipality', 'Households in ECHN']]
         a_table5_units.columns = ['GEOUID', 'Municipality', '20 Year Need']
-        # a_table5_units.replace('X', np.nan, inplace=True)
-        #
-        # # Convert all columns to numeric
-        # a_table5_units['20 Year Need'] = a_table5_units['20 Year Need'].apply(pd.to_numeric, errors='coerce')
+
         a_table5_units['Component'] = 'A. Extreme Core Housing Need'
         a_table5_units['5 Year Need'] = a_table5_units['20 Year Need'] / 4
         a_table5_units['order'] = 0
-        # pdb.set_trace()
+
 
         b_table6_units = table_6.loc[table_6[(' ', 'Regional Population')] == 'Total New Units - 20 years'][
             [('GEOUID', ''), ('Municipality', ''), (' ', 'Proportional Local PEH')]]
@@ -542,7 +492,6 @@ class PrepareTables:
         c_table11_units['5 Year Need'] = c_table11_units['20 Year Need'] / 4
         c_table11_units['order'] = 2
 
-        # pdb.set_trace()
         d_table13_units = table_13.loc[table_13[('Growth Scenarios', '')] == 'Total New Units - 20 years'][
             [('GEOUID', ''), ('Municipality', ''), ('New Units', '')]]
         d_table13_units.columns = ['GEOUID', 'Municipality', '20 Year Need']
@@ -715,11 +664,10 @@ class PrepareTables:
         newdf = unstacked_df.merge(tojoin[['Average ECHN Rate', 'GEOUID', 'Municipality', 'Total Households']],
                                    left_on=['GEOUID', 'Municipality', 'Total Households'],
                                    right_on=['GEOUID', 'Municipality', 'Total Households'], how='outer')
-        # pdb.set_trace()
+
         # calculate the units needed for renters
         newdf.loc[newdf['Total Households'] == 'Renters', 'Households in ECHN'] = newdf['2021 Households'] * (
                     newdf['Average ECHN Rate'].astype(float) / 100)
-        # newdf.loc[newdf['2021 Households'].isna(), 'Households in ECHN'] = np.nan
 
         total_new_units = newdf.groupby(['GEOUID', 'Municipality'])[['Households in ECHN']].sum()
         total_new_units['Total Households'] = 'Total New Units - 20 years'
@@ -731,7 +679,7 @@ class PrepareTables:
 
         result_df = result_df[column_order]
         result_df.replace('X', np.nan, inplace=True)
-        #
+
         # # Convert all columns to numeric
         result_df['Households in ECHN'] = result_df['Households in ECHN'].apply(pd.to_numeric, errors='coerce')
         result_df = result_df.sort_values(by=['Municipality', 'Total Households'])
@@ -762,8 +710,7 @@ class PrepareTables:
         column_order = ['GEOUID_CSD', 'Municipality', 'Regional Population', 'Local Population, 2021', '% of region',
                         'Regional PEH', 'Proportional Local PEH']
         result_df = result_df[column_order]
-        # result_df.columns = ['GEOUID', 'Municipality', 'Regional Population', 'Local Population, #', '% of region',
-        #                      'Regional PEH', 'Proportional Local PEH']
+
         result_df.columns = pd.MultiIndex.from_tuples(
             [('GEOUID', ''), ('Municipality', ''), (' ', 'Regional Population'),
              ('Local Population', '#'), ('Local Population', '% of region'), (' ', 'Regional PEH'),
@@ -791,15 +738,13 @@ class PrepareTables:
         df.set_index(['GEOUID', 'Municipality'], inplace=True)
         transposed_df = df.T
         unstacked_df = transposed_df.unstack().reset_index()
-        # pdb.set_trace()
         unstacked_df.columns = ['GEOUID', 'Municipality', f'Age – Primary Household Maintainer {year} Categories', f'{category}']
         unstacked_df = unstacked_df[~unstacked_df['Municipality'].isna()]
         unstacked_df.set_index(['GEOUID', 'Municipality'], inplace=True)
-        # pdb.set_trace()
+
         unstacked_df.columns = pd.MultiIndex.from_tuples([(' ', f'Age – Primary Household Maintainer {year} Categories'),
                                                           (f'{year} Households', f'{category}')])
-        # unstacked_df.set_index(('', f'Age – Primary Household Maintainer {year} Categories'), append=True, inplace=True)
-        # pdb.set_trace()
+
         return unstacked_df
 
     @staticmethod
@@ -811,9 +756,7 @@ class PrepareTables:
         transposed_df = df.T
         unstacked_df = transposed_df.unstack().reset_index()
         unstacked_df.columns = ['GEOUID', 'Municipality', f'Age Categories – Population', 'All Categories']
-        # df = df.T.rename_axis(f'Age Categories – Population').reset_index().rename(columns={
-        #     1: "All Categories"})
-        # pdb.set_trace()
+
 
         new_categories = {
             '15 to 24 years': ['15 to 19 years', '20 to 24 years'],
@@ -830,7 +773,6 @@ class PrepareTables:
         # Loop through the new categories to combine and sum the values
         for new_category, old_categories in new_categories.items():
             for municipality in unstacked_df['Municipality'].unique():
-                # pdb.set_trace()
                 filtered_df = unstacked_df[
                     (unstacked_df['Municipality'] == municipality) & (unstacked_df['Age Categories – Population'].isin(old_categories))]
                 summed_value = filtered_df['All Categories'].sum()
@@ -838,14 +780,10 @@ class PrepareTables:
                     summed_values_dict[municipality] = {}
                 summed_values_dict[municipality][new_category] = summed_value
 
-            # for old_category in old_categories:
-            #     summed_values_dict[old_category] = summed_value
-
-
         # Map the new combined categories to the original DataFrame
         unstacked_df['Age Categories – Household Maintainers'] = unstacked_df['Age Categories – Population'].map(
             lambda x: next((new_cat for new_cat, old_cats in new_categories.items() if x in old_cats), x))
-        # pdb.set_trace()
+
         summed_df = pd.DataFrame(summed_values_dict).T.stack().reset_index()
         summed_df.columns = ['Municipality', 'Age Categories – Household Maintainers', 'Summed Categories']
 
@@ -854,19 +792,11 @@ class PrepareTables:
         # Map the summed values back to the original DataFrame
         final_df.set_index(['GEOUID', 'Municipality'], inplace=True)
 
-        # pdb.set_trace()
         final_df.columns = pd.MultiIndex.from_tuples([(' ', 'Age Categories – Population'), (f'{year}', 'All Categories'),
                                                       (' ', 'Age Categories – Household Maintainers'),
                                                       (f'{year}', 'Summed Categories')
                                                       ])
-        # pdb.set_trace()
 
-        # final_df.set_index([('', 'Age Categories – Household Maintainers'),
-        #                                               ('', 'Age Categories – Population')], append=True, inplace=True)
-        # duplicated_mask = final_df[(f'{year}', 'Summed Categories')].duplicated()
-        # # Update the duplicated values to be blank
-        # final_df.loc[duplicated_mask, (f'{year}', 'Summed Categories')] = None
-        # pdb.set_trace()
         return final_df
 
     @staticmethod
@@ -881,12 +811,7 @@ class PrepareTables:
         unstacked_df = unstacked_df[~unstacked_df['Municipality'].isna()]
         unstacked_df.set_index(['GEOUID', 'Municipality', 'Age Categories – Household Maintainers'], inplace=True)
         unstacked_df.columns = pd.MultiIndex.from_tuples([(f'{year} Headship Rate', f'{category}')])
-        # unstacked_df.set_index(('', f'Age Categories – Household Maintainers'), append=True, inplace=True)
-        # df = df.T.rename_axis(f'Age Categories – Household Maintainers')
-        #
-        # df.columns = [category]
-        # df.columns = pd.MultiIndex.from_product([[f'{year} Headship Rate'], df.columns])
-        # pdb.set_trace()
+
         return unstacked_df
 
     @staticmethod
@@ -900,14 +825,13 @@ class PrepareTables:
         new_row[('GEOUID', '')] = table_7_2021[('GEOUID', '')].iloc[0]
         new_row[(' ', 'Age – Primary Household Maintainer 2021 Categories')] = '75 years and over'
 
-
         # Append the new row and drop the original rows
         updated_group = table_7_2021.append(new_row, ignore_index=True)
-        # updated_group = updated_group.replace('75 to 84 years85 years and over', '75 years and over')
+
         updated_group = updated_group.drop(index=row_indices_to_add).reset_index(drop=True)
         updated_group.columns = pd.MultiIndex.from_tuples(
             [('Age Categories – Household Maintainers', '') if col == (' ', 'Age – Primary Household Maintainer 2021 Categories') else col for col in updated_group.columns])
-        # pdb.set_trace()
+
         return updated_group
 
     @staticmethod
@@ -924,11 +848,11 @@ class PrepareTables:
     def clean_table_13_data(filtered_df, filtered_df_cd):
 
         temp = filtered_df.merge(filtered_df_cd, left_on='CD_ID', right_on='GEOUID', suffixes=('_CSD', '_CD'))
-        # pdb.set_trace()
+
         # Build regional rows
         reg = temp.copy()
         reg['Growth Scenarios'] = 'Regionally Based Household Growth'
-        # pdb.set_trace()
+
         reg['New Units'] = (reg['Regional Growth Rate'] / 100) * reg['2021 CSD Household']
         reg['2041 Projection'] = reg['2021 CSD Household'] + reg['New Units']
         reg = reg[
@@ -941,7 +865,7 @@ class PrepareTables:
         loc = temp.copy()
         loc['Growth Scenarios'] = 'Local Household Growth'
         loc['Regional Growth Rate'] = "n/a"
-        loc['2041 CSD Household Projection'] = loc['2041 CSD Household Projection'].replace('No data', 0)
+        loc['2041 CSD Household Projection'] = loc['2041 CSD Household Projection'].fillna(0)
         loc['New Units'] = loc['2041 CSD Household Projection'] - loc['2021 CSD Household']
         loc = loc[
             ['GEOUID_CSD', 'Municipality', 'Growth Scenarios', 'Regional Growth Rate', '2021 CSD Household',
@@ -959,9 +883,8 @@ class PrepareTables:
         avg_df['Growth Scenarios'] = 'Scenario Average'
 
         # Check demand factor and modify data accordingly
-        # temp.set_index('GEOUID_CSD', inplace=True)
+
         zero_demand_factor = temp['Demand factor'] == 0
-        # pdb.set_trace()
         avg_df = avg_df.join(reg_units).join(loc_units, lsuffix='_reg', rsuffix='_loc')
         avg_df['New Units'] = avg_df[['New Units_reg', 'New Units_loc']].mean(axis=1)
         avg_df.reset_index(inplace=True)
@@ -971,17 +894,6 @@ class PrepareTables:
         total = avg_df[['GEOUID', 'Municipality', 'New Units']].copy()
         total['Growth Scenarios'] = 'Total New Units - 20 years'
         total['New Units'] = total['New Units'].where(~zero_demand_factor, avg_df['New Units_reg'])
-        # total.reset_index(inplace=True)
-
-        # avg_df = avg_df.join(reg_units).join(loc_units, lsuffix='_reg', rsuffix='_loc')
-        # avg_df['New Units'] = avg_df[['New Units_reg', 'New Units_loc']].mean(axis=1)
-        # pdb.set_trace()
-        # Build total rows
-        # total = avg_df[['Municipality', 'New Units']].copy()
-        # total['Growth Scenarios'] = 'Total New Units - 20 years'
-        # total['New Units'] = total['New Units'].where(~zero_demand_factor, reg_units['New Units'])
-        # avg_df.reset_index(inplace=True)
-        # total.reset_index(inplace=True)
 
         # Now reorganize data to match table format
 
@@ -1086,8 +998,6 @@ class PrepareTables:
         # Build regional rows
         reg = temp.copy()
         reg['Growth Scenarios'] = 'Regionally Based Household Growth'
-        # pdb.set_trace()
-        # reg['2021 CSD Household'] = reg['2021 CSD Household'].replace('No data', 0)
         reg['New Units'] = (reg['Regional Growth Rate'] / 100) * reg['2021 CSD Household']
         reg['2026 Projection'] = reg['2021 CSD Household'] + reg['New Units']
         reg = reg[
@@ -1095,20 +1005,19 @@ class PrepareTables:
              '2026 Projection', 'New Units']]
         reg.columns = ['GEOUID', 'Municipality', 'Growth Scenarios', 'Regional Growth Rate', 'Projection, 2021',
                        'Projection, 2026', 'New Units']
-        # pdb.set_trace()
+
         # Build local rows
         loc = temp.copy()
         loc['Growth Scenarios'] = 'Local Household Growth'
         loc['Regional Growth Rate'] = "n/a"
-        # loc['2021 CSD Household Estimate'] = loc['2021 CSD Household Estimate'].replace('No data', 0)
-        loc['2026 CSD Household Projection'] = loc['2026 CSD Household Projection'].replace('No data', 0)
+        loc['2026 CSD Household Projection'] = loc['2026 CSD Household Projection'].fillna(0)
         loc['New Units'] = loc['2026 CSD Household Projection'] - loc['2021 CSD Household']
         loc = loc[
             ['GEOUID_CSD', 'Municipality', 'Growth Scenarios', 'Regional Growth Rate', '2021 CSD Household',
              '2026 CSD Household Projection', 'New Units']]
         loc.columns = ['GEOUID', 'Municipality', 'Growth Scenarios', 'Regional Growth Rate', 'Projection, 2021',
                        'Projection, 2026', 'New Units']
-        # pdb.set_trace()
+
         # Build average rows
         reg_units = reg[['GEOUID', 'New Units']]
         loc_units = loc[['GEOUID', 'New Units']]
@@ -1117,11 +1026,10 @@ class PrepareTables:
         avg_df = reg[['GEOUID', 'Municipality']].copy()
         avg_df.set_index('GEOUID', inplace=True)
         avg_df['Growth Scenarios'] = 'Scenario Average'
-        # avg_df = avg_df.join(reg_units).join(loc_units, lsuffix='_reg', rsuffix='_loc')
-        # avg_df['New Units'] = avg_df[['New Units_reg', 'New Units_loc']].mean(axis=1)
+
 
         # means zero demand factor
-        zero_demand_factor = temp['2026 CSD Household Projection'] == 'No data'
+        zero_demand_factor = temp['2026 CSD Household Projection'] == 0
         # pdb.set_trace()
         avg_df = avg_df.join(reg_units).join(loc_units, lsuffix='_reg', rsuffix='_loc')
         avg_df['New Units'] = avg_df[['New Units_reg', 'New Units_loc']].mean(axis=1)
@@ -1133,21 +1041,10 @@ class PrepareTables:
         total['Growth Scenarios'] = 'Total New Units - 5 years'
         total['New Units'] = total['New Units'].where(~zero_demand_factor, avg_df['New Units_reg'])
 
-        # pdb.set_trace()
         # Now reorganize data to match table format
         result_df = pd.concat([reg, loc, avg_df[['GEOUID', 'Municipality', 'Growth Scenarios', 'New Units']], total])
         result_df = result_df.sort_values(by=['Municipality', 'Growth Scenarios'])
 
-        # final_result_df = result_df.merge(temp[['GEOUID_CSD', '2026 CSD Household Projection']], how='left', left_on='GEOUID',
-        #                                   right_on='GEOUID_CSD').drop('GEOUID_CSD', axis=1)
-        # final_result_df = final_result_df[~((final_result_df['2026 CSD Household Projection'] == 'No data') &
-        #                                     (final_result_df['Growth Scenarios'].isin(
-        #                                         ['Scenario Average', 'Local Household Growth'])))]
-
-        # result_df = reg.append(loc).append(avg_df[['GEOUID', 'Municipality', 'Growth Scenarios', 'New Units']]).append(
-        #     total)
-        # result_df = result_df.sort_values(by=['Municipality', 'Growth Scenarios'])
-        # pdb.set_trace()
 
         return result_df
 
@@ -1163,8 +1060,7 @@ class PrepareTables:
             new_columns.append('_'.join([str(part).strip() for part in new_col if part != '']))
         clean_input.columns = new_columns
         clean_input = clean_input.replace('No ')
-        # pdb.set_trace()
-        # input_df.columns = input_df.columns.map('_'.join).str.strip('_')
+
         return clean_input
 
 
@@ -1183,23 +1079,19 @@ class PrepareTables:
             denominator_indices = row['Denominator Indices']
             formula_class = row['Formula Class']
             output_column = row['Output']
-            # if output_column == 'Local primary rental market vacany rate':
-            #     pdb.set_trace()
+
             numerator_values = clean_input_df.iloc[:, numerator_indices].sum(axis=1)
             try:
                 denominator_values = clean_input_df.iloc[:, denominator_indices].sum(axis=1)
             except ValueError:
                 denominator_values = 0
-            # pdb.set_trace()
 
 
             result = pd.Series([None] * len(clean_input_df), index=clean_input_df.index)
             valid_mask = (denominator_values != 0) & denominator_values.apply(lambda x: isinstance(x, (int, float)))
-            # if output_column == "Percent of owners with a mortgage in ECHN, 2021":
-            #     pdb.set_trace()
+
             if formula_class == 1:
                 result[valid_mask] = (numerator_values[valid_mask] / denominator_values[valid_mask]) * 100
-                # pdb.set_trace()
                 result[valid_mask] = result[valid_mask].astype(str) + "%"
 
             elif formula_class == 2:
@@ -1210,7 +1102,6 @@ class PrepareTables:
             else:
                 result = None  # Handle other formula classes if needed
 
-            # pdb.set_trace()
             results_df[output_column] = result
 
         return pd.concat([clean_input_df, results_df], axis=1)
