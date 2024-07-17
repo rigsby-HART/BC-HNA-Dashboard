@@ -6,12 +6,12 @@ import numpy as np
 import warnings
 import json, os
 import geopandas as gpd
-# import fiona
+import fiona
 import plotly.graph_objects as go
 from dash import dcc, html, Input, Output, ctx, callback
 from sqlalchemy import create_engine
 
-# fiona.supported_drivers
+fiona.supported_drivers
 warnings.filterwarnings("ignore")
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -28,25 +28,30 @@ mapped_geo_code = mapped_geo_code.replace(5917056, 5917054).replace('Juan de Fuc
 
 # Adding missing CSDs from HART file
 add_new_codes = [
-    [590002, 59, 59, 'Denman Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590003, 59, 59, 'Gabriola Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590004, 59, 59, 'Galiano Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590005, 59, 59, 'Gambier Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590006, 59, 59, 'Hornby Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590007, 59, 59, 'Lasqueti Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590008, 59, 59, 'Mayne Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590009, 59, 59, 'North Pender Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590010, 59, 59, 'Saltspring Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590011, 59, 59, 'Saturna Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590012, 59, 59, 'Thetis Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590013, 59, 59, 'South Pender Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+    [5900002, 59, 59, 'Denman Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900003, 59, 59, 'Gabriola Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900004, 59, 59, 'Galiano Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900005, 59, 59, 'Gambier Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900006, 59, 59, 'Hornby Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900007, 59, 59, 'Lasqueti Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900008, 59, 59, 'Mayne Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900009, 59, 59, 'North Pender Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900010, 59, 59, 'Saltspring Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900011, 59, 59, 'Saturna Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900012, 59, 59, 'Thetis Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900013, 59, 59, 'South Pender Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
                     [5949018, 5949, 59, 'Kitimat-Stikine E RDA (CSD, BC)', 'Kitimat-Stikine (CD, BC)', 'British Columbia (Province)']
                  ]
 missing_codes_df = pd.DataFrame(add_new_codes, columns=mapped_geo_code.columns)
 mapped_geo_code = pd.concat([mapped_geo_code, missing_codes_df])
+mapped_geo_code.to_csv(r"L:\Projects\22005 - Housing Needs Assessment\Processed\HART_2024\BC-HNA-Dashboard\sources\Archive\mapped_geo.csv")
 
 df_geo_list = pd.read_sql_table('geocodes', engine_old.connect())
 df_geo_list = df_geo_list[(df_geo_list['Geo_Code'].astype(str)).str.startswith(str(province_code))]
+
+missing_geo_df = pd.DataFrame([[i[0], i[3]] for i in add_new_codes], columns=df_geo_list.columns)
+df_geo_list = pd.concat([df_geo_list, missing_geo_df])
+# pdb.set_trace()
 
 df_region_list = pd.read_sql_table('regioncodes', engine_old.connect())
 df_region_list = df_region_list[(df_region_list['Region_Code'].astype(str)).str.startswith(str(province_code))]
@@ -101,6 +106,7 @@ modebar_activecolor = '#044762'
 order = mapped_geo_code.copy()
 order['Geo_Code'] = order['Geo_Code'].astype(str)
 order = order.sort_values(by=['Province_Code', 'Region_Code', 'Geo_Code'])
+order = order[~(order['Geography'] == 'British Columbia (Province)')]
 
 # Setting a default map which renders before the dashboard is fully loaded
 
@@ -267,7 +273,6 @@ def store_geo(geo, geo_c, btn1, btn2, btn3, btn4, btn5):
 # Province Map generator
 def province_map(value, random_color):
     clicked_code = mapped_geo_code.loc[mapped_geo_code['Geography'] == value, :]['Province_Code'].tolist()[0]
-
     gdf_p_code_added['Geo_Code'] = gdf_p_code_added.index
 
     if random_color == True:
@@ -352,12 +357,22 @@ def subregion_map(value, random_color, clicked_code):
         clicked_region_code = mapped_geo_code.loc[mapped_geo_code['Geography'] == value, :]['Region_Code'].tolist()[0]
         clicked_code = mapped_geo_code.loc[mapped_geo_code['Geography'] == value, :]['Geo_Code'].tolist()[0]
         clicked_code = str(clicked_code)
-
-        gdf_sr_filtered = gpd.read_file(f'./sources/mapdata_simplified/subregion_data/{clicked_region_code}.shp')
+        # print(clicked_code)
+        try:
+            gdf_sr_filtered = gpd.read_file(f'./sources/mapdata_simplified/subregion_data/{clicked_region_code}.shp')
+        except fiona.errors.DriverError:
+            gdf_sr_filtered = gdf_p_code_added
+            gdf_sr_filtered['CSDUID'] = province_code
+            gdf_sr_filtered['CSDNAME'] = value
 
     else:
         clicked_code_region = clicked_code[:4]
-        gdf_sr_filtered = gpd.read_file(f'./sources/mapdata_simplified/subregion_data/{clicked_code_region}.shp')
+        try:
+            gdf_sr_filtered = gpd.read_file(f'./sources/mapdata_simplified/subregion_data/{clicked_code_region}.shp')
+        except fiona.errors.DriverError:
+            gdf_sr_filtered = gdf_p_code_added
+            gdf_sr_filtered['CSDUID'] = province_code
+            gdf_sr_filtered['CSDNAME'] = value
 
     if random_color == True:
         gdf_sr_filtered["rand"] = gdf_sr_filtered['CSDUID'].apply(

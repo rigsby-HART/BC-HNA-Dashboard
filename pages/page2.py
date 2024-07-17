@@ -16,24 +16,37 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 engine_new = create_engine('sqlite:///sources//new_hart.db')
 engine_old = create_engine('sqlite:///sources//old_hart.db')
 
+mapping_dict = {
+    590002: 5900002,
+    590003: 5900003,
+    590004: 5900004,
+    590005: 5900005,
+    590006: 5900006,
+    590007: 5900007,
+    590008: 5900008,
+    590009: 5900009,
+    590010: 5900010,
+    590011: 5900011,
+    590012: 5900012,
+    590013: 5900013,
+}
 
-
-table_4a = pd.read_sql_table('table_4a_new', engine_new.connect())
-table_4b = pd.read_sql_table('table_4b_new', engine_new.connect())
-table_5 = pd.read_sql_table('table_5_new', engine_new.connect())
-table_6 = pd.read_sql_table('table_6_new', engine_new.connect())
-table_7_2006 = pd.read_sql_table('table_7_2006_new', engine_new.connect())
-table_7_2021 = pd.read_sql_table('table_7_2021_new', engine_new.connect())
-table_8 = pd.read_sql_table('table_8_new', engine_new.connect())
-table_9 = pd.read_sql_table('table_9_new', engine_new.connect())
-table_10 = pd.read_sql_table('table_10_new', engine_new.connect())
-table_11 = pd.read_sql_table('table_11_new', engine_new.connect())
-table_12 = pd.read_sql_table('table_12_new', engine_new.connect())
-table_13 = pd.read_sql_table('table_13_new', engine_new.connect())
-table_14 = pd.read_sql_table('table_14_new', engine_new.connect())
+table_4a = pd.read_sql_table('table_4a_new', engine_new.connect()).replace(mapping_dict)
+table_4b = pd.read_sql_table('table_4b_new', engine_new.connect()).replace(mapping_dict)
+table_5 = pd.read_sql_table('table_5_new', engine_new.connect()).replace(mapping_dict)
+table_6 = pd.read_sql_table('table_6_new', engine_new.connect()).replace(mapping_dict)
+table_7_2006 = pd.read_sql_table('table_7_2006_new', engine_new.connect()).replace(mapping_dict)
+table_7_2021 = pd.read_sql_table('table_7_2021_new', engine_new.connect()).replace(mapping_dict)
+table_8 = pd.read_sql_table('table_8_new', engine_new.connect()).replace(mapping_dict)
+table_9 = pd.read_sql_table('table_9_new', engine_new.connect()).replace(mapping_dict)
+table_10 = pd.read_sql_table('table_10_new', engine_new.connect()).replace(mapping_dict)
+table_11 = pd.read_sql_table('table_11_new', engine_new.connect()).replace(mapping_dict)
+table_12 = pd.read_sql_table('table_12_new', engine_new.connect()).replace(mapping_dict)
+table_13 = pd.read_sql_table('table_13_new', engine_new.connect()).replace(mapping_dict)
+table_14 = pd.read_sql_table('table_14_new', engine_new.connect()).replace(mapping_dict)
 table_14 = table_14.rename(columns={'Remove this column name': ''})
-table_15 = pd.read_sql_table('table_15_new', engine_new.connect())
-table_16 = pd.read_sql_table('table_16_new', engine_new.connect())
+table_15 = pd.read_sql_table('table_15_new', engine_new.connect()).replace(mapping_dict)
+table_16 = pd.read_sql_table('table_16_new', engine_new.connect()).replace(mapping_dict)
 
 # Importing Geo Code Information
 mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_old.connect())
@@ -41,18 +54,18 @@ mapped_geo_code = mapped_geo_code.replace(5917056, 5917054).replace('Juan de Fuc
 
 # Adding missing CSDs from HART file
 add_new_codes = [
-    [590002, 59, 59, 'Denman Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590003, 59, 59, 'Gabriola Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590004, 59, 59, 'Galiano Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590005, 59, 59, 'Gambier Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590006, 59, 59, 'Hornby Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590007, 59, 59, 'Lasqueti Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590008, 59, 59, 'Mayne Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590009, 59, 59, 'North Pender Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590010, 59, 59, 'Saltspring Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590011, 59, 59, 'Saturna Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590012, 59, 59, 'Thetis Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
-                    [590013, 59, 59, 'South Pender Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+    [5900002, 59, 59, 'Denman Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900003, 59, 59, 'Gabriola Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900004, 59, 59, 'Galiano Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900005, 59, 59, 'Gambier Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900006, 59, 59, 'Hornby Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900007, 59, 59, 'Lasqueti Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900008, 59, 59, 'Mayne Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900009, 59, 59, 'North Pender Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900010, 59, 59, 'Saltspring Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900011, 59, 59, 'Saturna Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900012, 59, 59, 'Thetis Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5900013, 59, 59, 'South Pender Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
                     [5949018, 5949, 59, 'Kitimat-Stikine E RDA (CSD, BC)', 'Kitimat-Stikine (CD, BC)', 'British Columbia (Province)']
                  ]
 missing_codes_df = pd.DataFrame(add_new_codes, columns=mapped_geo_code.columns)
