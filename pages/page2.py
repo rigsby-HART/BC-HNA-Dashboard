@@ -37,7 +37,26 @@ table_16 = pd.read_sql_table('table_16_new', engine_new.connect())
 
 # Importing Geo Code Information
 mapped_geo_code = pd.read_sql_table('geocodes_integrated', engine_old.connect())
+mapped_geo_code = mapped_geo_code.replace(5917056, 5917054).replace('Juan de Fuca (CSD, BC)', 'Juan de Fuca (Part 1) (CSD, BC)')
 
+# Adding missing CSDs from HART file
+add_new_codes = [
+    [590002, 59, 59, 'Denman Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [590003, 59, 59, 'Gabriola Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [590004, 59, 59, 'Galiano Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [590005, 59, 59, 'Gambier Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [590006, 59, 59, 'Hornby Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [590007, 59, 59, 'Lasqueti Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [590008, 59, 59, 'Mayne Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [590009, 59, 59, 'North Pender Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [590010, 59, 59, 'Saltspring Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [590011, 59, 59, 'Saturna Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [590012, 59, 59, 'Thetis Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [590013, 59, 59, 'South Pender Island Trust Area', 'British Columbia (Province)', 'British Columbia (Province)'],
+                    [5949018, 5949, 59, 'Kitimat-Stikine E RDA (CSD, BC)', 'Kitimat-Stikine (CD, BC)', 'British Columbia (Province)']
+                 ]
+missing_codes_df = pd.DataFrame(add_new_codes, columns=mapped_geo_code.columns)
+mapped_geo_code = pd.concat([mapped_geo_code, missing_codes_df])
 
 # Configuration for plot icons
 
