@@ -158,7 +158,7 @@ layout = html.Div(children=[
                             ]),
                             html.Li([
                                 html.I(["""A note on rounding: """,
-                                html.A("per provincial guidelines", href="https://www2.gov.bc.ca/assets/gov/housing-and-tenancy/tools-for-government/uploads/hnr_method_technical_guidelines.pdf"),
+                                html.A("per provincial guidelines", href="https://www2.gov.bc.ca/assets/gov/housing-and-tenancy/tools-for-government/uploads/summary_of_legislative_and_regulatory_requirements_for_housing_needs_reports.pdf"),
                                 """, the figures in Components A-F are not rounded and are shown to two decimal places. Total housing need 
                                 is rounded in Table 13 to the nearest whole number, per guidelines."""])
                             ])
